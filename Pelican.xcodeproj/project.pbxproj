@@ -10,9 +10,14 @@
 		4AD033621FEE142D00084911 /* Pelican_iOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 4AD033601FEE142D00084911 /* Pelican_iOS.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4AD0336F1FEE14A100084911 /* Pelican_macOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 4AD0336D1FEE14A100084911 /* Pelican_macOS.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4AD033751FEE14FC00084911 /* ImapSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AD033741FEE14FC00084911 /* ImapSession.swift */; };
-		4AD0337B1FEE2E4300084911 /* libetpan-ios.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4AD033771FEE2A0600084911 /* libetpan-ios.a */; };
 		4AD0337C1FEE2E4300084911 /* libsasl2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4AD033781FEE2A0600084911 /* libsasl2.a */; };
 		4AD0337E1FEE341C00084911 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 4AD0337D1FEE341C00084911 /* libz.tbd */; };
+		4AD033A41FEE3B2A00084911 /* ImapSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AD033741FEE14FC00084911 /* ImapSession.swift */; };
+		4AD033A61FEE3B5200084911 /* libetpan.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4AD033A51FEE3B5200084911 /* libetpan.a */; };
+		4AD033A81FEE3BAC00084911 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 4AD033A71FEE3BAC00084911 /* libz.tbd */; };
+		4AD033AA1FEE421800084911 /* libetpan.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4AD033A91FEE421800084911 /* libetpan.a */; };
+		4AD033D81FEE89A900084911 /* ImapSession+Result.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AD033D71FEE89A900084911 /* ImapSession+Result.swift */; };
+		4AD033DB1FEEACE300084911 /* clist+utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AD033DA1FEEACE300084911 /* clist+utils.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -26,6 +31,11 @@
 		4AD033771FEE2A0600084911 /* libetpan-ios.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libetpan-ios.a"; path = "dependencies/lib/iOS/libetpan-ios.a"; sourceTree = "<group>"; };
 		4AD033781FEE2A0600084911 /* libsasl2.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libsasl2.a; path = dependencies/lib/iOS/libsasl2.a; sourceTree = "<group>"; };
 		4AD0337D1FEE341C00084911 /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS11.2.sdk/usr/lib/libz.tbd; sourceTree = DEVELOPER_DIR; };
+		4AD033A51FEE3B5200084911 /* libetpan.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libetpan.a; path = dependencies/lib/macOS/libetpan.a; sourceTree = "<group>"; };
+		4AD033A71FEE3BAC00084911 /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
+		4AD033A91FEE421800084911 /* libetpan.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libetpan.a; path = dependencies/lib/iOS/libetpan.a; sourceTree = "<group>"; };
+		4AD033D71FEE89A900084911 /* ImapSession+Result.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ImapSession+Result.swift"; sourceTree = "<group>"; };
+		4AD033DA1FEEACE300084911 /* clist+utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "clist+utils.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -33,8 +43,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4AD033AA1FEE421800084911 /* libetpan.a in Frameworks */,
 				4AD0337E1FEE341C00084911 /* libz.tbd in Frameworks */,
-				4AD0337B1FEE2E4300084911 /* libetpan-ios.a in Frameworks */,
 				4AD0337C1FEE2E4300084911 /* libsasl2.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -43,6 +53,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4AD033A81FEE3BAC00084911 /* libz.tbd in Frameworks */,
+				4AD033A61FEE3B5200084911 /* libetpan.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -63,6 +75,7 @@
 		4AD033561FEE13B800084911 /* Pelican */ = {
 			isa = PBXGroup;
 			children = (
+				4AD033D91FEEACCB00084911 /* utils */,
 				4AD033731FEE14D900084911 /* imap */,
 			);
 			path = Pelican;
@@ -99,6 +112,7 @@
 			isa = PBXGroup;
 			children = (
 				4AD033741FEE14FC00084911 /* ImapSession.swift */,
+				4AD033D71FEE89A900084911 /* ImapSession+Result.swift */,
 			);
 			path = imap;
 			sourceTree = "<group>";
@@ -106,11 +120,22 @@
 		4AD033761FEE2A0500084911 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				4AD033A91FEE421800084911 /* libetpan.a */,
+				4AD033A71FEE3BAC00084911 /* libz.tbd */,
+				4AD033A51FEE3B5200084911 /* libetpan.a */,
 				4AD0337D1FEE341C00084911 /* libz.tbd */,
 				4AD033771FEE2A0600084911 /* libetpan-ios.a */,
 				4AD033781FEE2A0600084911 /* libsasl2.a */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		4AD033D91FEEACCB00084911 /* utils */ = {
+			isa = PBXGroup;
+			children = (
+				4AD033DA1FEEACE300084911 /* clist+utils.swift */,
+			);
+			path = utils;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -230,6 +255,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4AD033D81FEE89A900084911 /* ImapSession+Result.swift in Sources */,
+				4AD033DB1FEEACE300084911 /* clist+utils.swift in Sources */,
 				4AD033751FEE14FC00084911 /* ImapSession.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -238,6 +265,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4AD033A41FEE3B2A00084911 /* ImapSession.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -465,9 +493,14 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = $PROJECT_DIR/dependencies/include;
 				INFOPLIST_FILE = "Pelican macOS/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/dependencies/lib/macOS",
+				);
 				MACOSX_DEPLOYMENT_TARGET = 10.13;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -476,6 +509,7 @@
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_INCLUDE_PATHS = $PROJECT_DIR/dependencies/;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 4.0;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -533,15 +567,21 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = $PROJECT_DIR/dependencies/include;
 				INFOPLIST_FILE = "Pelican macOS/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/dependencies/lib/macOS",
+				);
 				MACOSX_DEPLOYMENT_TARGET = 10.13;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = jp.ysn551.Pelican;
 				PRODUCT_NAME = $PROJECT_NAME;
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
+				SWIFT_INCLUDE_PATHS = $PROJECT_DIR/dependencies/;
 				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
 				SWIFT_VERSION = 4.0;
 				VERSIONING_SYSTEM = "apple-generic";
