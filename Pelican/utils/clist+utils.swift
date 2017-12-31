@@ -21,7 +21,8 @@ class ClistIterator<T>: IteratorProtocol {
         defer {
             current = current?.pointee.next
         }
-        let data = current?.pointee.data.bindMemory(to: T.self, capacity: 1)
+        guard let unsafeData = current?.pointee.data else { return nil }
+        let data = unsafeData.bindMemory(to: T.self, capacity: 1)
         return data
     }
 }
