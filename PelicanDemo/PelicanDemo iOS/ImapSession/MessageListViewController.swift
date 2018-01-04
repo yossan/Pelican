@@ -8,8 +8,14 @@
 import UIKit
 import Pelican
 
-class MessageListViewController: UITableViewController {
+class MessageListViewController: UITableViewController, ImapSessionViewContentProtocol {
 
+    var sessionController: ImapSessionViewController {
+        return self.parent?.parent as! ImapSessionViewController
+    }
+    
+    var messages: [Message] = []
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -19,9 +25,17 @@ class MessageListViewController: UITableViewController {
         // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
         // self.navigationItem.rightBarButtonItem = self.editButtonItem
         
-        let r = ImapSession.shared.fetchMessages()
-        print("fetching message result:", r)
-        
+        self.sessionController.command(async: { (imap) in
+            imap.fetchLast(num: 20, options: [.messageHeader, .bodystructure]) { (message) in
+                
+                OperationQueue.main.addOperation {
+                    self.messages.append(message)
+                    self.tableView.reloadData()
+                }
+            }
+        },success: { (_, _) in
+            
+        })
     }
 
     override func didReceiveMemoryWarning() {
@@ -33,23 +47,34 @@ class MessageListViewController: UITableViewController {
 
     override func numberOfSections(in tableView: UITableView) -> Int {
         // #warning Incomplete implementation, return the number of sections
-        return 0
+        return 1
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         // #warning Incomplete implementation, return the number of rows
-        return 0
+        return self.messages.count
     }
 
-    /*
+    
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "reuseIdentifier", for: indexPath)
+        let cell = tableView.dequeueReusableCell(withIdentifier: "MessageCell", for: indexPath) as! MessageCell
 
-        // Configure the cell...
+        let header = self.messages[indexPath.row].header
+        cell.ibSubjectLabel.text = header.subject
+        cell.ibFromLabel.text = header.from.first!.displayName ?? header.from.first!.email
 
         return cell
     }
-    */
+    
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let message = self.messages[indexPath.row]
+        print(message)
+    }
+    
+    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 73
+    }
+
 
     /*
     // Override to support conditional editing of the table view.

@@ -29,14 +29,6 @@ class FolderListViewController: UITableViewController {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
-
-    func showMessageList(withFolder folder: String) {
-        if ImapSession.shared.selectFolder(folder) {
-            let messageListViewController = self.storyboard!.instantiateViewController(withIdentifier: "MessageListViewController")
-            self.navigationController?.pushViewController(messageListViewController, animated: true)
-        }
-        
-    }
     
     
     // MARK: - Table view data source
@@ -103,7 +95,7 @@ class FolderListViewController: UITableViewController {
     // MARK: - UITableView Delegate
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let folder = self.folders[indexPath.row]
-        self.showMessageList(withFolder: folder)
+//        self.showMessageList(withFolder: folder)
     }
 
     /*

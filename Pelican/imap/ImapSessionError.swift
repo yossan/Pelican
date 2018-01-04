@@ -64,10 +64,12 @@ public enum ImapSessionError: Int, Error {
         }
     }
     
-    func check() throws {
+    public func check() throws {
         switch self {
-        case NO_ERROR, NO_ERROR_AUTHENTICATED, NO_ERROR_NON_AUTHENTICATED:
-            break
+        case .NO_ERROR,
+             .NO_ERROR_AUTHENTICATED,
+             .NO_ERROR_NON_AUTHENTICATED:
+            break   
         default:
             throw self
         }

@@ -11,29 +11,27 @@ import Result
 
 class AuthorizationSession {
     
-    static let shared: AuthorizationSession = AuthorizationSession()
-    
-    enum State {
-        case new
-        case tokenExpiration
-        case loginPossible (Token, User)
+    init(user: User?) {
+        self.user = user ?? User.new()
     }
     
+    //MARK: - Instance properties
+    
+    let user: User
+    
     var state: State {
-        if let user = StoredData.shared.user,
-            let token = StoredData.shared.token {
-            if token.isExpired {
-                return .tokenExpiration
+        if self.user.isNew == false {
+            if let token = self.user.token,
+                token.isExpired {
+                return .tokenExpiration(token)
             } else {
-                return .loginPossible(token, user)
+                return .loginPossible(user)
             }
         } else {
             return .new
         }
     }
  
-    // MARK: - Instance properties
-    
     lazy var oauthClient: OAuthClient = {
         let info = NSDictionary(contentsOfFile: Bundle.main.path(forResource: "Provider", ofType: "plist")!)!
         let provider = Provider.google(
@@ -46,15 +44,29 @@ class AuthorizationSession {
     
     // MARK: - Public functions
     
-    var hasValidAccessToken: Bool {
-        return false
+    func saveUserInfo() {
+        if user.isNew == false {
+            try? StoredData.shared.save(user: user)
+        }
     }
     
-    func makeAuthorizationViewController() -> AuthorizationViewController {
-        return self.oauthClient.makeAuthorizationViewController()
+    func makeViewController() -> AuthorizationSessionViewController {
+        let viewController = AuthorizationSessionViewController(nibName: "AuthorizationSessionViewController", bundle: nil)
+        viewController.manager = self
+        return viewController
     }
     
-    func refreshAccessToken() {
-//        self.oauthClient.refreshAccessToken(<#T##token: Token##Token#>, withCompletion: <#T##(Result<Token, OAuthClientError>) -> Void#>)
+    func refreshAccessToken(_ oldToken: Token, completion: @escaping (Result<User, OAuthClientError>)->()) {
+        
+        self.oauthClient.refreshAccessToken(oldToken) { (result) in
+            switch result {
+            case .success(let token):
+                self.user.token = token
+                try? StoredData.shared.update(token: token)
+                completion(.success(self.user))
+            case .failure(let error):
+                completion(.failure(error))
+            }
+        }
     }
 }

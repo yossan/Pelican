@@ -10,10 +10,11 @@ import libetpan
 
 public class ImapSession {
     public static let shared: ImapSession = ImapSession()
-    
     let imap: UnsafeMutablePointer<mailimap>
+    
     init() {
         self.imap = mailimap_new(0, nil)
+        mailimap_set_progress_callback(imap, {(_,_,_) in },{(_,_,_) in }, nil)
     }
     
     public func connect(hostName: String, port: UInt16) -> ImapSessionError {
@@ -66,34 +67,103 @@ public class ImapSession {
         return results.isEmpty == false ? results : nil
     }
     
-    public func selectFolder(_ folder: String) -> Bool {
-        return mailimap_select(imap, folder) == 0 ? true : false
+    public func select(_ name: String) -> ImapSessionError {
+        let r = mailimap_select(imap, name)
+        return ImapSessionError(r)
     }
     
-    struct FetchOptions: OptionSet {
-        static let headers       = FetchOptions(rawValue: 1 << 1)
-        static let bodystructure = FetchOptions(rawValue: 1 << 0)
+    public struct FetchOptions: OptionSet {
+        public static let messageHeader = FetchOptions(rawValue: 1 << 1)
+        public static let bodystructure = FetchOptions(rawValue: 1 << 0)
         
-        let rawValue: Int
-        init(rawValue: Int) {
+        public let rawValue: Int
+        public init(rawValue: Int) {
             self.rawValue = rawValue
         }
     }
-    /**
-     options
-     Body.headers
-     Body.headers(.subject, .othrer(""))
-     
-     */
-    public func fetch() {
-        
+    
+    struct FetchContext {
+        let options: FetchOptions
+        let handler: (Message) -> ()
     }
     
-    public func fetchMessages() -> Bool {
-//        mailimap_set_progress_callback(imap, {(_,_,_) in },{(_,_,_) in }, nil)
-//        mailimap_set_msg_att_handler(imap, { (message, _) in
-//            print("こいこい")
-//        }, nil/*contextを渡す*/)
+    public func fetchLast(num: UInt32, options: FetchOptions, handler: @escaping (Message)->()) -> ImapSessionError {
+        
+        let messageCount: UInt32 = {
+            guard let info = self.imap.pointee.imap_selection_info,
+                info.pointee.sel_has_exists == 1 else {
+                    return 0
+            }
+            return UInt32(info.pointee.sel_exists)
+        }()
+        
+        let range: Range<UInt32> = messageCount - num ..< messageCount
+        return self.fetch(range: range, options: options, handler: handler)
+    }
+    
+    public func fetch(range: Range<UInt32>, options: FetchOptions, handler: @escaping (Message)->()) -> ImapSessionError {
+        
+        var fetchContext = FetchContext(options: options, handler: handler)
+        mailimap_set_msg_att_handler(imap, { (msgAtt, rawContext) in
+            let fetchContext = rawContext!.bindMemory(to: FetchContext.self, capacity: 1)
+            
+            var message = Message()
+            MessageAttribute.parse(msgAtt!) { (result)in
+                switch result {
+                case .uid(let value):
+                    message.uid = value
+                case .messageFlags(let flags):
+                    message.flags = flags
+                case .messageHeader(let header):
+                    message.header = header
+                case .mailPart(let part):
+                    message.body = part
+                }
+            }
+            
+            fetchContext.pointee.handler(message)
+            
+        }, &fetchContext)
+        
+        let set = mailimap_set_new_empty();
+        mailimap_set_add_interval(set, range.lowerBound, range.upperBound)
+        defer { mailimap_set_free(set) }
+        
+//                        mailimap_fetch_type_new_fetch_att_list_empty()
+        let fetchType = mailimap_fetch_type_new_fetch_att_list_empty()
+        defer { mailimap_fetch_type_free(fetchType) }
+        
+        let uidAtt = mailimap_fetch_att_new_uid();
+        mailimap_fetch_type_new_fetch_att_list_add(fetchType, uidAtt)
+        
+        if options.contains(.messageHeader) {
+            let flagsAtt = mailimap_fetch_att_new_flags()
+            mailimap_fetch_type_new_fetch_att_list_add(fetchType, flagsAtt)
+            
+            let headerSection = mailimap_section_new_header()
+            let headerAtt = mailimap_fetch_att_new_body_peek_section(headerSection)
+            mailimap_fetch_type_new_fetch_att_list_add(fetchType, headerAtt)
+            defer {
+//                mailimap_section_free(headerSection) 外に出す
+            }
+        }
+        
+        if options.contains(.bodystructure) {
+            let bodyStructureAtt = mailimap_fetch_att_new_bodystructure()
+            mailimap_fetch_type_new_fetch_att_list_add(fetchType, bodyStructureAtt)
+        }
+        
+        var fetchResult: UnsafeMutablePointer<clist>? = clist_new()
+        defer { mailimap_fetch_list_free(fetchResult) }
+        let r = mailimap_uid_fetch(imap, set, fetchType, &fetchResult)
+        return ImapSessionError(r)
+    }
+    
+    func fetchMessages() -> Bool {
+        
+        mailimap_set_msg_att_handler(imap, { (message, context) in
+            print("こいこい")
+        }, nil/*contextを渡す*/)
         
         // 結果を格納
         var fetch_result = clist_new()

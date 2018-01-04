@@ -13,13 +13,11 @@ class StoredData {
     
     // MARK: - token
     
-    lazy var token: Token? = {
-        return self.load(Token.self, from: Paths.tokenFile)
-    }()
-    
-    func save(token: Token) throws {
-        self.token = token
-        try self.save(token, to: Paths.tokenFile)
+    func update(token: Token) throws {
+        if let user = self.user {
+            user.token = token
+            try self.save(user: user)
+        }
     }
     
     // MARK: - user

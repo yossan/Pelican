@@ -6,99 +6,133 @@
 //
 
 import UIKit
+import OAuthClient
+import Result
 import Pelican
 
 class ImapSessionViewController: UIViewController {
 
+    var authSession: AuthorizationSession! = nil
+    
+    // MARK: - View Life Cycle
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-
         // Do any additional setup after loading the view.
-        
+        self.moveForMessageListView()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
     }
 
+    override func viewDidAppear(_ animated: Bool) {
+//        self.showInitialContentView()
+    }
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
     
-    func command<R>(ctx: UnsafeRawPointer? = nil, task: (ImapSession) throws -> R?, success: (UnsafeRawPointer?, R?) -> Void, failure: ((UnsafeRawPointer?, ImapSessionError) -> (Bool))? = nil) {
-        do {
-            let r = try task(ImapSession.shared)
-            success(ctx, r)
-        } catch let error  {
-            if let error = error as? ImapSessionError {
-                guard let failure = failure else {
-                    self.handleImapError(error)
-                    return
+    // MARK: - Internal
+    let commandQueue: OperationQueue = {
+        let q = OperationQueue()
+        q.name = "ImapCommandOperationQueue"
+        return q
+    }()
+    
+    func command<R>(ctx: UnsafeRawPointer? = nil, async task: @escaping (ImapSession) throws -> R, success: @escaping (UnsafeRawPointer?, R) -> Void, failure: ((UnsafeRawPointer?, ImapSessionError) -> ())? = nil) {
+        commandQueue.addOperation {
+            do {
+                let r = try task(ImapSession.shared)
+                OperationQueue.main.addOperation {
+                    success(ctx, r)
                 }
-                if failure(ctx, error) {
-                    self.handleImapError(error)
+            } catch let error as ImapSessionError {
+                OperationQueue.main.addOperation {
+                    failure?(ctx, error)
                 }
-            }
+            } catch {}
         }
     }
     
     func handleImapError(_ error: ImapSessionError?) {
-        
     }
-
     
-    func showInitialContentView() {
-        switch AuthorizationSession.shared.state {
-        case .new:
-            self.showAuthorizationSessionView()
-        // AuthorizationSessionViewを表示する
-        case .tokenExpiration:
-            AuthorizationSession.shared.refreshAccessToken()
-        // refreshToken
-        case .loginPossible (let token, let user):
-            self.command(ctx: nil,
-                task: { (imap) -> Void in
-                    let gmail = Configuration.gmail
-                    try imap.connect(hostName: gmail.host, port: gmail.port).check()
-                    try imap.login(user: user.email, accessToken: token.accessToken).check()
-                },
-                success: { _,_ in
-                })
-            // connect & login
+    
+    // MARK: - private
+    
+    private func moveForMessageListView() {
+        switch self.authSession.state {
+        case .tokenExpiration (let token):
+            self.refreshToken(token) { (result) in
+                switch result {
+                case .success(let user):
+                    self.showMessageList(with: user)
+                case .failure(let error):
+                    self.handleAuthError(error)
+                }
+            }
+        case .loginPossible (let user):
+            self.showMessageList(with: user)
+        default: break
         }
     }
     
-    
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
+    private func showMessageList(with user: User) {
+        self.command(async: { (imap) -> () in
+            let gmail = Configuration.gmail
+            try imap.connect(hostName: gmail.host, port: gmail.port).check()
+            try imap.login(user: user.email!, accessToken: user.token!.accessToken).check()
+            try imap.select("INBOX").check()
+        }, success: { [weak self] (_, _) in
+            guard let `self` = self else { return }
+            let msgNaviViewController = self.storyboard?.instantiateViewController(withIdentifier: "MessageNavigationViewController") as! UINavigationController
+            self.addChildViewController(msgNaviViewController)
+            msgNaviViewController.view.frame = self.view.bounds
+            self.view.addSubview(msgNaviViewController.view)
+            msgNaviViewController.didMove(toParentViewController: self)
+        })
     }
-    */
     
-
-    
-    func connectGmail(user:String, accessToken: String) {
+    private func showAuthorizationSessionView(animated: Bool = true) {
+        let authSessionViewController = self.authSession.makeViewController()
+        authSessionViewController.completionHadler = { [unowned authSessionViewController] (result) in
+            switch result {
+            case .success(let user):
+                authSessionViewController.dismiss(animated: true, completion: {
+                    self.showMessageList(with: user)
+                })
+            case .failure(let error):
+                self.handleAuthError(error)
+                authSessionViewController.dismiss(animated: true)
+            }
+        }
         
-        let imapSession = ImapSession.shared
-        let gmail = Configuration.gmail
-        var r = imapSession.connect(hostName: gmail.host, port: gmail.port)
-        print("connect", r)
-        r = imapSession.login(user: user, accessToken: accessToken)
-        print("login", r)
+        self.present(authSessionViewController, animated: animated, completion: nil)
     }
     
-    func loginGmail() {
+    private func refreshToken(_ token: Token, completion: @escaping (Result<User, OAuthClientError>)->()) {
+        self.authSession.refreshAccessToken(token){ (result) in
+            switch result {
+            case .success(let user):
+                completion(.success(user))
+            case .failure(let error):
+//                self.handleAuthError(error)
+                completion(.failure(error))
+            }
+        }
     }
     
-    // ログインに失敗した際は表示する
-    func showAuthorizationSessionView() {
-    }
-    
-    func selectInbox() {
-    }
-    
-    func showMessageListView() {
+    private func handleAuthError(_ error: OAuthClientError) {
+        switch error {
+        case .networkError(let error): break
+        case .accessTokenDenied: break
+        case .invalidScope(let desc): break
+        case .userCancelled: break
+        case .invalidGrant: fallthrough
+        case .invalidRequest: fallthrough
+        case .unknown: break
+        }
     }
 }

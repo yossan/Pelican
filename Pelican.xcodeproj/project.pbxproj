@@ -11,8 +11,16 @@
 		4A4B82071FF3863400D3C072 /* MessageFlags.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A4B82061FF3863400D3C072 /* MessageFlags.swift */; };
 		4A4B82091FF3886000D3C072 /* mailimap_msg_att_static.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A4B82081FF3886000D3C072 /* mailimap_msg_att_static.swift */; };
 		4A4B820B1FF3C69E00D3C072 /* mime.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A4B820A1FF3C69E00D3C072 /* mime.swift */; };
-		4AAE7AB91FF4CF6A0033E45F /* libetpan.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4AAE7AB71FF4CF6A0033E45F /* libetpan.a */; };
-		4AAE7ABA1FF4CF6A0033E45F /* libsasl2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4AAE7AB81FF4CF6A0033E45F /* libsasl2.a */; };
+		4AC69B591FFB831E00341C83 /* MessageAttribute.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AC69B581FFB831D00341C83 /* MessageAttribute.swift */; };
+		4AC69B5D1FFCAD2300341C83 /* MessageAttribute+parseHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AC69B5C1FFCAD2300341C83 /* MessageAttribute+parseHeader.swift */; };
+		4AC69B5E1FFCB00700341C83 /* MessageAttribute+parseHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AC69B5C1FFCAD2300341C83 /* MessageAttribute+parseHeader.swift */; };
+		4AC69B5F1FFCB00C00341C83 /* mailimap_msg_att_static.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A4B82081FF3886000D3C072 /* mailimap_msg_att_static.swift */; };
+		4AC69B601FFCB01200341C83 /* MessageFlags.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A4B82061FF3863400D3C072 /* MessageFlags.swift */; };
+		4AC69B611FFCB01900341C83 /* ImapSessionError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AFF4FB51FF769AE00C2FC72 /* ImapSessionError.swift */; };
+		4AC69B621FFCB02E00341C83 /* MessageHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AFF4F721FF5C0DB00C2FC72 /* MessageHeader.swift */; };
+		4AC69B631FFCB03000341C83 /* MessageHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AFF4F721FF5C0DB00C2FC72 /* MessageHeader.swift */; };
+		4AC69B651FFCB9E700341C83 /* MessageAttribute+parseMessageFlags.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AC69B641FFCB9E700341C83 /* MessageAttribute+parseMessageFlags.swift */; };
+		4AC69B671FFCBD9400341C83 /* MessageAttribute+parseMailPart.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AC69B661FFCBD9400341C83 /* MessageAttribute+parseMailPart.swift */; };
 		4AD033621FEE142D00084911 /* Pelican_iOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 4AD033601FEE142D00084911 /* Pelican_iOS.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4AD0336F1FEE14A100084911 /* Pelican_macOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 4AD0336D1FEE14A100084911 /* Pelican_macOS.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4AD033751FEE14FC00084911 /* ImapSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AD033741FEE14FC00084911 /* ImapSession.swift */; };
@@ -21,8 +29,6 @@
 		4AD033A81FEE3BAC00084911 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 4AD033A71FEE3BAC00084911 /* libz.tbd */; };
 		4AD033DB1FEEACE300084911 /* clist+utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AD033DA1FEEACE300084911 /* clist+utils.swift */; };
 		4AD033DF1FEF755700084911 /* String+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AD033DE1FEF755700084911 /* String+.swift */; };
-		4AFF4F731FF5C0DB00C2FC72 /* MessageHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AFF4F721FF5C0DB00C2FC72 /* MessageHeader.swift */; };
-		4AFF4F741FF5C0DB00C2FC72 /* MessageHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AFF4F721FF5C0DB00C2FC72 /* MessageHeader.swift */; };
 		4AFF4F761FF5C0E800C2FC72 /* MailPart.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AFF4F751FF5C0E800C2FC72 /* MailPart.swift */; };
 		4AFF4F771FF5C0E800C2FC72 /* MailPart.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AFF4F751FF5C0E800C2FC72 /* MailPart.swift */; };
 		4AFF4F791FF5C10600C2FC72 /* Message.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AFF4F781FF5C10600C2FC72 /* Message.swift */; };
@@ -32,13 +38,27 @@
 		4AFF4FB61FF769AE00C2FC72 /* ImapSessionError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AFF4FB51FF769AE00C2FC72 /* ImapSessionError.swift */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		4A0EFAEE1FFDC5E6003AB1AD /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = include/libetpan;
+			dstSubfolderSpec = 16;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
 		4A46CE571FF2A12A00837B6A /* libiconv.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libiconv.tbd; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS11.2.sdk/usr/lib/libiconv.tbd; sourceTree = DEVELOPER_DIR; };
 		4A4B82061FF3863400D3C072 /* MessageFlags.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageFlags.swift; sourceTree = "<group>"; };
 		4A4B82081FF3886000D3C072 /* mailimap_msg_att_static.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = mailimap_msg_att_static.swift; sourceTree = "<group>"; };
 		4A4B820A1FF3C69E00D3C072 /* mime.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = mime.swift; sourceTree = "<group>"; };
-		4AAE7AB71FF4CF6A0033E45F /* libetpan.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libetpan.a; path = dependencies/build/lib/iOS/libetpan.a; sourceTree = "<group>"; };
-		4AAE7AB81FF4CF6A0033E45F /* libsasl2.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libsasl2.a; path = dependencies/build/lib/iOS/libsasl2.a; sourceTree = "<group>"; };
+		4AC69B581FFB831D00341C83 /* MessageAttribute.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageAttribute.swift; sourceTree = "<group>"; };
+		4AC69B5C1FFCAD2300341C83 /* MessageAttribute+parseHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MessageAttribute+parseHeader.swift"; sourceTree = "<group>"; };
+		4AC69B641FFCB9E700341C83 /* MessageAttribute+parseMessageFlags.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MessageAttribute+parseMessageFlags.swift"; sourceTree = "<group>"; };
+		4AC69B661FFCBD9400341C83 /* MessageAttribute+parseMailPart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MessageAttribute+parseMailPart.swift"; sourceTree = "<group>"; };
 		4AD0335D1FEE142D00084911 /* Pelican.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pelican.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		4AD033601FEE142D00084911 /* Pelican_iOS.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Pelican_iOS.h; sourceTree = "<group>"; };
 		4AD033611FEE142D00084911 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -62,8 +82,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4AAE7AB91FF4CF6A0033E45F /* libetpan.a in Frameworks */,
-				4AAE7ABA1FF4CF6A0033E45F /* libsasl2.a in Frameworks */,
 				4A46CE581FF2A12B00837B6A /* libiconv.tbd in Frameworks */,
 				4AD0337E1FEE341C00084911 /* libz.tbd in Frameworks */,
 			);
@@ -133,9 +151,12 @@
 			children = (
 				4AD033741FEE14FC00084911 /* ImapSession.swift */,
 				4AFF4FB51FF769AE00C2FC72 /* ImapSessionError.swift */,
+				4AC69B581FFB831D00341C83 /* MessageAttribute.swift */,
+				4AC69B5C1FFCAD2300341C83 /* MessageAttribute+parseHeader.swift */,
+				4AC69B641FFCB9E700341C83 /* MessageAttribute+parseMessageFlags.swift */,
+				4AC69B661FFCBD9400341C83 /* MessageAttribute+parseMailPart.swift */,
 				4A4B82081FF3886000D3C072 /* mailimap_msg_att_static.swift */,
 				4A4B820A1FF3C69E00D3C072 /* mime.swift */,
-				4A4B82061FF3863400D3C072 /* MessageFlags.swift */,
 			);
 			path = imap;
 			sourceTree = "<group>";
@@ -143,8 +164,6 @@
 		4AD033761FEE2A0500084911 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				4AAE7AB71FF4CF6A0033E45F /* libetpan.a */,
-				4AAE7AB81FF4CF6A0033E45F /* libsasl2.a */,
 				4A46CE571FF2A12A00837B6A /* libiconv.tbd */,
 				4AD033A71FEE3BAC00084911 /* libz.tbd */,
 				4AD0337D1FEE341C00084911 /* libz.tbd */,
@@ -166,6 +185,7 @@
 			children = (
 				4AFF4F7B1FF5CAE300C2FC72 /* Folder.swift */,
 				4AFF4F781FF5C10600C2FC72 /* Message.swift */,
+				4A4B82061FF3863400D3C072 /* MessageFlags.swift */,
 				4AFF4F721FF5C0DB00C2FC72 /* MessageHeader.swift */,
 				4AFF4F751FF5C0E800C2FC72 /* MailPart.swift */,
 			);
@@ -202,6 +222,7 @@
 				4AD033591FEE142D00084911 /* Frameworks */,
 				4AD0335A1FEE142D00084911 /* Headers */,
 				4AD0335B1FEE142D00084911 /* Resources */,
+				4A0EFAEE1FFDC5E6003AB1AD /* CopyFiles */,
 			);
 			buildRules = (
 			);
@@ -294,8 +315,12 @@
 				4AFF4F761FF5C0E800C2FC72 /* MailPart.swift in Sources */,
 				4AFF4F7C1FF5CAE300C2FC72 /* Folder.swift in Sources */,
 				4AD033DB1FEEACE300084911 /* clist+utils.swift in Sources */,
+				4AC69B621FFCB02E00341C83 /* MessageHeader.swift in Sources */,
+				4AC69B671FFCBD9400341C83 /* MessageAttribute+parseMailPart.swift in Sources */,
+				4AC69B651FFCB9E700341C83 /* MessageAttribute+parseMessageFlags.swift in Sources */,
+				4AC69B5D1FFCAD2300341C83 /* MessageAttribute+parseHeader.swift in Sources */,
+				4AC69B591FFB831E00341C83 /* MessageAttribute.swift in Sources */,
 				4AFF4FB61FF769AE00C2FC72 /* ImapSessionError.swift in Sources */,
-				4AFF4F731FF5C0DB00C2FC72 /* MessageHeader.swift in Sources */,
 				4AD033DF1FEF755700084911 /* String+.swift in Sources */,
 				4AFF4F791FF5C10600C2FC72 /* Message.swift in Sources */,
 				4AD033751FEE14FC00084911 /* ImapSession.swift in Sources */,
@@ -308,10 +333,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				4AFF4F771FF5C0E800C2FC72 /* MailPart.swift in Sources */,
+				4AC69B5E1FFCB00700341C83 /* MessageAttribute+parseHeader.swift in Sources */,
+				4AC69B631FFCB03000341C83 /* MessageHeader.swift in Sources */,
 				4AFF4F7D1FF5CAE300C2FC72 /* Folder.swift in Sources */,
 				4AFF4F7A1FF5C10600C2FC72 /* Message.swift in Sources */,
-				4AFF4F741FF5C0DB00C2FC72 /* MessageHeader.swift in Sources */,
+				4AC69B601FFCB01200341C83 /* MessageFlags.swift in Sources */,
 				4AD033A41FEE3B2A00084911 /* ImapSession.swift in Sources */,
+				4AC69B611FFCB01900341C83 /* ImapSessionError.swift in Sources */,
+				4AC69B5F1FFCB00C00341C83 /* mailimap_msg_att_static.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -387,7 +416,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/dependencies/build/include",
+					"$(PROJECT_DIR)/dependencies/build/ios/include",
 				);
 				INFOPLIST_FILE = "Pelican iOS/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
@@ -395,10 +424,14 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/dependencies/build/lib/iOS",
+					"$(PROJECT_DIR)/dependencies/build/ios/lib",
 				);
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
+				OTHER_LDFLAGS = (
+					"-letpan",
+					"-lsasl2",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = jp.ysn551.Pelican;
 				PRODUCT_NAME = $PROJECT_NAME;
 				SDKROOT = iphoneos;
@@ -465,7 +498,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/dependencies/build/include",
+					"$(PROJECT_DIR)/dependencies/build/ios/include",
 				);
 				INFOPLIST_FILE = "Pelican iOS/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
@@ -473,9 +506,13 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/dependencies/build/lib/iOS",
+					"$(PROJECT_DIR)/dependencies/build/ios/lib",
 				);
 				MTL_ENABLE_DEBUG_INFO = NO;
+				OTHER_LDFLAGS = (
+					"-letpan",
+					"-lsasl2",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = jp.ysn551.Pelican;
 				PRODUCT_NAME = $PROJECT_NAME;
 				SDKROOT = iphoneos;

@@ -23,41 +23,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="XQx-8c-NLE" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-1154" y="134"/>
-        </scene>
-        <!--Navigation Controller-->
-        <scene sceneID="HzG-bc-C8u">
-            <objects>
-                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="huw-jM-cQi" sceneMemberID="viewController">
-                    <toolbarItems/>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="dRX-Lb-3cr">
-                        <rect key="frame" x="0.0" y="20" width="375" height="44"/>
-                        <autoresizingMask key="autoresizingMask"/>
-                    </navigationBar>
-                    <nil name="viewControllers"/>
-                    <connections>
-                        <segue destination="hlv-8U-BpQ" kind="relationship" relationship="rootViewController" id="G3R-lC-2BX"/>
-                    </connections>
-                </navigationController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="qiK-wC-RBZ" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="-319" y="134"/>
-        </scene>
-        <!--View Controller-->
-        <scene sceneID="157-R3-aUP">
-            <objects>
-                <viewController id="hlv-8U-BpQ" customClass="ViewController" customModule="PelicanDemo_iOS" customModuleProvider="target" sceneMemberID="viewController">
-                    <view key="view" contentMode="scaleToFill" id="sKo-ua-x1f">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                        <viewLayoutGuide key="safeArea" id="b9D-r1-0K4"/>
-                    </view>
-                    <navigationItem key="navigationItem" id="ju8-Y7-Ebv"/>
-                </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="e2h-pj-4aA" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="364" y="134"/>
+            <point key="canvasLocation" x="-1898" y="44"/>
         </scene>
         <!--Folder List View Controller-->
         <scene sceneID="abD-WY-xVx">

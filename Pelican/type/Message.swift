@@ -6,3 +6,20 @@
 //
 
 import Foundation
+import libetpan
+
+public class Message: CustomStringConvertible {
+    public var uid    : Int = 0
+    public var flags  : MessageFlag = []
+    public var header : MessageHeader = MessageHeader()
+    public var body   : MailPart? = nil
+    
+    deinit {
+        NSLog("\(type(of: self)).\(#function)")
+    }
+    
+    public var description: String {
+        let body = self.body != nil ? "\(self.body!)" : ""
+        return "uid = \(uid), flags = \(flags), header = \(header), body = \(body)"
+    }
+}

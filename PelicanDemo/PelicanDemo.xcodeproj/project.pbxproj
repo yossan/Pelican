@@ -7,14 +7,18 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4AA1DE541FFDCCB100AC9FC7 /* OAuthClient.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4AA1DE571FFDCCB100AC9FC7 /* OAuthClient.framework */; };
+		4AA1DE551FFDCCB100AC9FC7 /* Pelican.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4AA1DE581FFDCCB100AC9FC7 /* Pelican.framework */; };
+		4AA1DE561FFDCCB100AC9FC7 /* Result.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4AA1DE591FFDCCB100AC9FC7 /* Result.framework */; };
+		4AA1DE5A1FFDCCCC00AC9FC7 /* OAuthClient.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4AA1DE571FFDCCB100AC9FC7 /* OAuthClient.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		4AA1DE5B1FFDCCCC00AC9FC7 /* Pelican.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4AA1DE581FFDCCB100AC9FC7 /* Pelican.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		4AA1DE5C1FFDCCCC00AC9FC7 /* Result.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4AA1DE591FFDCCB100AC9FC7 /* Result.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		4AA1DE5E1FFE101E00AC9FC7 /* MessageDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AA1DE5D1FFE101E00AC9FC7 /* MessageDetailViewController.swift */; };
+		4AC69B6A1FFCD08900341C83 /* MessageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AC69B681FFCD08900341C83 /* MessageCell.swift */; };
 		4AD0338E1FEE38CA00084911 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AD0338D1FEE38CA00084911 /* AppDelegate.swift */; };
-		4AD033901FEE38CA00084911 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AD0338F1FEE38CA00084911 /* ViewController.swift */; };
 		4AD033931FEE38CA00084911 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4AD033911FEE38CA00084911 /* Main.storyboard */; };
 		4AD033951FEE38CA00084911 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4AD033941FEE38CA00084911 /* Assets.xcassets */; };
 		4AD033981FEE38CA00084911 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4AD033961FEE38CA00084911 /* LaunchScreen.storyboard */; };
-		4AD033C91FEE46E500084911 /* OAuthClient.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4AD033CC1FEE46E500084911 /* OAuthClient.framework */; };
-		4AD033CA1FEE46E500084911 /* Pelican.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4AD033CD1FEE46E500084911 /* Pelican.framework */; };
-		4AD033CB1FEE46E500084911 /* Result.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4AD033CE1FEE46E500084911 /* Result.framework */; };
 		4AD033D01FEE495200084911 /* Provider.plist in Resources */ = {isa = PBXBuildFile; fileRef = 4AD033CF1FEE495200084911 /* Provider.plist */; };
 		4AD033D31FEE5ADF00084911 /* FolderListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AD033D11FEE5ADF00084911 /* FolderListViewController.swift */; };
 		4AD033DD1FEF4D2400084911 /* MessageListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AD033DC1FEF4D2400084911 /* MessageListViewController.swift */; };
@@ -23,6 +27,7 @@
 		4AD31D341FF9295C009A2CDB /* GmailConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AD31D331FF9295C009A2CDB /* GmailConfiguration.swift */; };
 		4AD31D361FF92B93009A2CDB /* Configuration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AD31D351FF92B93009A2CDB /* Configuration.swift */; };
 		4AD31D381FF92BC6009A2CDB /* AppConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AD31D371FF92BC6009A2CDB /* AppConfiguration.swift */; };
+		4AD31D3A1FF9D610009A2CDB /* AuthorizaionSession+State.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AD31D391FF9D610009A2CDB /* AuthorizaionSession+State.swift */; };
 		4AFF4FB81FF77E6600C2FC72 /* RootViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AFF4FB71FF77E6600C2FC72 /* RootViewController.swift */; };
 		4AFF4FBC1FF77F0B00C2FC72 /* AuthorizationSessionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AFF4FBA1FF77F0B00C2FC72 /* AuthorizationSessionViewController.swift */; };
 		4AFF4FBD1FF77F0B00C2FC72 /* AuthorizationSessionViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4AFF4FBB1FF77F0B00C2FC72 /* AuthorizationSessionViewController.xib */; };
@@ -35,17 +40,34 @@
 		4AFF4FCE1FF7F2E900C2FC72 /* File.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AFF4FCD1FF7F2E900C2FC72 /* File.swift */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		4AA1DE411FFDCA9000AC9FC7 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				4AA1DE5A1FFDCCCC00AC9FC7 /* OAuthClient.framework in Embed Frameworks */,
+				4AA1DE5B1FFDCCCC00AC9FC7 /* Pelican.framework in Embed Frameworks */,
+				4AA1DE5C1FFDCCCC00AC9FC7 /* Result.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
+		4AA1DE571FFDCCB100AC9FC7 /* OAuthClient.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = OAuthClient.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		4AA1DE581FFDCCB100AC9FC7 /* Pelican.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Pelican.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		4AA1DE591FFDCCB100AC9FC7 /* Result.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Result.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		4AA1DE5D1FFE101E00AC9FC7 /* MessageDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageDetailViewController.swift; sourceTree = "<group>"; };
+		4AC69B681FFCD08900341C83 /* MessageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageCell.swift; sourceTree = "<group>"; };
 		4AD0338A1FEE38CA00084911 /* PelicanDemo iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "PelicanDemo iOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		4AD0338D1FEE38CA00084911 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		4AD0338F1FEE38CA00084911 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		4AD033921FEE38CA00084911 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		4AD033941FEE38CA00084911 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		4AD033971FEE38CA00084911 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		4AD033991FEE38CA00084911 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		4AD033CC1FEE46E500084911 /* OAuthClient.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = OAuthClient.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		4AD033CD1FEE46E500084911 /* Pelican.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Pelican.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		4AD033CE1FEE46E500084911 /* Result.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Result.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		4AD033CF1FEE495200084911 /* Provider.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Provider.plist; sourceTree = "<group>"; };
 		4AD033D11FEE5ADF00084911 /* FolderListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FolderListViewController.swift; sourceTree = "<group>"; };
 		4AD033DC1FEF4D2400084911 /* MessageListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageListViewController.swift; sourceTree = "<group>"; };
@@ -54,6 +76,7 @@
 		4AD31D331FF9295C009A2CDB /* GmailConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GmailConfiguration.swift; sourceTree = "<group>"; };
 		4AD31D351FF92B93009A2CDB /* Configuration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Configuration.swift; sourceTree = "<group>"; };
 		4AD31D371FF92BC6009A2CDB /* AppConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppConfiguration.swift; sourceTree = "<group>"; };
+		4AD31D391FF9D610009A2CDB /* AuthorizaionSession+State.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AuthorizaionSession+State.swift"; sourceTree = "<group>"; };
 		4AFF4FB71FF77E6600C2FC72 /* RootViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootViewController.swift; sourceTree = "<group>"; };
 		4AFF4FBA1FF77F0B00C2FC72 /* AuthorizationSessionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthorizationSessionViewController.swift; sourceTree = "<group>"; };
 		4AFF4FBB1FF77F0B00C2FC72 /* AuthorizationSessionViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = AuthorizationSessionViewController.xib; sourceTree = "<group>"; };
@@ -71,9 +94,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4AD033C91FEE46E500084911 /* OAuthClient.framework in Frameworks */,
-				4AD033CA1FEE46E500084911 /* Pelican.framework in Frameworks */,
-				4AD033CB1FEE46E500084911 /* Result.framework in Frameworks */,
+				4AA1DE541FFDCCB100AC9FC7 /* OAuthClient.framework in Frameworks */,
+				4AA1DE551FFDCCB100AC9FC7 /* Pelican.framework in Frameworks */,
+				4AA1DE561FFDCCB100AC9FC7 /* Result.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -101,7 +124,6 @@
 			isa = PBXGroup;
 			children = (
 				4AD033911FEE38CA00084911 /* Main.storyboard */,
-				4AD0338F1FEE38CA00084911 /* ViewController.swift */,
 				4AD0338D1FEE38CA00084911 /* AppDelegate.swift */,
 				4AFF4FB71FF77E6600C2FC72 /* RootViewController.swift */,
 				4AFF4FCC1FF7F2C700C2FC72 /* Managers */,
@@ -119,9 +141,9 @@
 		4AD0339D1FEE3A8A00084911 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				4AD033CC1FEE46E500084911 /* OAuthClient.framework */,
-				4AD033CD1FEE46E500084911 /* Pelican.framework */,
-				4AD033CE1FEE46E500084911 /* Result.framework */,
+				4AA1DE571FFDCCB100AC9FC7 /* OAuthClient.framework */,
+				4AA1DE581FFDCCB100AC9FC7 /* Pelican.framework */,
+				4AA1DE591FFDCCB100AC9FC7 /* Result.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -139,6 +161,7 @@
 			isa = PBXGroup;
 			children = (
 				4AFF4FC51FF78BDE00C2FC72 /* AuthorizationSession.swift */,
+				4AD31D391FF9D610009A2CDB /* AuthorizaionSession+State.swift */,
 				4AFF4FBA1FF77F0B00C2FC72 /* AuthorizationSessionViewController.swift */,
 				4AFF4FBB1FF77F0B00C2FC72 /* AuthorizationSessionViewController.xib */,
 			);
@@ -153,6 +176,8 @@
 				4AFF4FC31FF77FCD00C2FC72 /* ImapSessionViewContentProtocol.swift */,
 				4AD033D11FEE5ADF00084911 /* FolderListViewController.swift */,
 				4AD033DC1FEF4D2400084911 /* MessageListViewController.swift */,
+				4AC69B681FFCD08900341C83 /* MessageCell.swift */,
+				4AA1DE5D1FFE101E00AC9FC7 /* MessageDetailViewController.swift */,
 			);
 			path = ImapSession;
 			sourceTree = "<group>";
@@ -188,6 +213,7 @@
 				4AD033861FEE38CA00084911 /* Sources */,
 				4AD033871FEE38CA00084911 /* Frameworks */,
 				4AD033881FEE38CA00084911 /* Resources */,
+				4AA1DE411FFDCA9000AC9FC7 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -255,7 +281,9 @@
 				4AD31D2F1FF9080F009A2CDB /* User.swift in Sources */,
 				4AFF4FC41FF77FCD00C2FC72 /* ImapSessionViewContentProtocol.swift in Sources */,
 				4AFF4FCE1FF7F2E900C2FC72 /* File.swift in Sources */,
+				4AD31D3A1FF9D610009A2CDB /* AuthorizaionSession+State.swift in Sources */,
 				4AD31D381FF92BC6009A2CDB /* AppConfiguration.swift in Sources */,
+				4AA1DE5E1FFE101E00AC9FC7 /* MessageDetailViewController.swift in Sources */,
 				4AD31D341FF9295C009A2CDB /* GmailConfiguration.swift in Sources */,
 				4AD31D311FF909B7009A2CDB /* Token+.swift in Sources */,
 				4AFF4FC61FF78BDE00C2FC72 /* AuthorizationSession.swift in Sources */,
@@ -265,10 +293,10 @@
 				4AFF4FCB1FF7E84200C2FC72 /* Paths.swift in Sources */,
 				4AFF4FC91FF7C5F000C2FC72 /* StoredData.swift in Sources */,
 				4AFF4FC21FF77F4F00C2FC72 /* ImapSessionViewController.swift in Sources */,
-				4AD033901FEE38CA00084911 /* ViewController.swift in Sources */,
 				4AD033DD1FEF4D2400084911 /* MessageListViewController.swift in Sources */,
 				4AFF4FBC1FF77F0B00C2FC72 /* AuthorizationSessionViewController.swift in Sources */,
 				4AD0338E1FEE38CA00084911 /* AppDelegate.swift in Sources */,
+				4AC69B6A1FFCD08900341C83 /* MessageCell.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -340,6 +368,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = MGQ8Q35MV8;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -360,7 +389,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				HEADER_SEARCH_PATHS = "";
+				HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/../dependencies/build/ios/include";
 				INFOPLIST_FILE = "PelicanDemo iOS/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 11.2;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -410,6 +439,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = MGQ8Q35MV8;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -424,7 +454,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				HEADER_SEARCH_PATHS = "";
+				HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/../dependencies/build/ios/include";
 				INFOPLIST_FILE = "PelicanDemo iOS/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 11.2;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
