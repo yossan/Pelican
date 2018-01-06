@@ -9,7 +9,7 @@ import Foundation
 
 public indirect enum MailPart: CustomStringConvertible {
     case multiPart (id: String?, type: MultipartType, parts: [MailPart], boundary: String?)
-    case singlePart(id: String, type: ContentType)
+    case singlePart(id: String, data: ContentData)
     
     public var description: String {
         switch self {
@@ -17,8 +17,8 @@ public indirect enum MailPart: CustomStringConvertible {
             let id = id ?? "0"
             let boundary = boundary ?? ""
             return "multiPart(id = \(id), type = \(type), parts = \(parts), boundary = \(boundary))"
-        case let .singlePart(id, type):
-            return "singlePart(id = \(id), type = \(type))"
+        case let .singlePart(id, data):
+            return "singlePart(id = \(id), data = \(data))"
         }
     }
 }
@@ -30,9 +30,9 @@ public enum MultipartType {
     case notSupported
 }
 
-public enum ContentType {
-    case basic (type: MediaType, disposition: Disposition, fields: BodyFields)
-    case text (type: TextType, fields: BodyFields)
+public enum ContentData {
+    case basic (type: MediaType, disposition: Disposition, fields: BodyFields, rowData: Data?)
+    case text (type: TextType, fields: BodyFields, rowData: Data?)
     case message (header: MessageHeader, fields: BodyFields, body: MailPart)
 }
 
@@ -82,7 +82,7 @@ public enum TextType: CustomStringConvertible {
         case .html:
             return "HTML"
         case .notSupported:
-            return "MotSupported"
+            return "NotSupported"
         }
     }
 }

@@ -41,18 +41,15 @@ class ImapSessionViewController: UIViewController {
         return q
     }()
     
-    func command<R>(ctx: UnsafeRawPointer? = nil, async task: @escaping (ImapSession) throws -> R, success: @escaping (UnsafeRawPointer?, R) -> Void, failure: ((UnsafeRawPointer?, ImapSessionError) -> ())? = nil) {
+    func command(_ task: @escaping (ImapSession) throws -> (), catched: @escaping (Error) -> ())  {
         commandQueue.addOperation {
             do {
-                let r = try task(ImapSession.shared)
+                try task(ImapSession.shared)
+            } catch let error  {
                 OperationQueue.main.addOperation {
-                    success(ctx, r)
+                    catched(error)
                 }
-            } catch let error as ImapSessionError {
-                OperationQueue.main.addOperation {
-                    failure?(ctx, error)
-                }
-            } catch {}
+            }
         }
     }
     
@@ -80,18 +77,23 @@ class ImapSessionViewController: UIViewController {
     }
     
     private func showMessageList(with user: User) {
-        self.command(async: { (imap) -> () in
+        self.command({[weak self] (imap) -> () in
             let gmail = Configuration.gmail
             try imap.connect(hostName: gmail.host, port: gmail.port).check()
             try imap.login(user: user.email!, accessToken: user.token!.accessToken).check()
             try imap.select("INBOX").check()
-        }, success: { [weak self] (_, _) in
+            
             guard let `self` = self else { return }
-            let msgNaviViewController = self.storyboard?.instantiateViewController(withIdentifier: "MessageNavigationViewController") as! UINavigationController
-            self.addChildViewController(msgNaviViewController)
-            msgNaviViewController.view.frame = self.view.bounds
-            self.view.addSubview(msgNaviViewController.view)
-            msgNaviViewController.didMove(toParentViewController: self)
+            OperationQueue.main.addOperation { [weak self] in
+                guard let `self` = self else { return }
+                let msgNaviViewController = self.storyboard?.instantiateViewController(withIdentifier: "MessageNavigationViewController") as! UINavigationController
+                self.addChildViewController(msgNaviViewController)
+                msgNaviViewController.view.frame = self.view.bounds
+                self.view.addSubview(msgNaviViewController.view)
+                msgNaviViewController.didMove(toParentViewController: self)
+            }
+            }, catched: { (error) in
+                self.handleImapError(error as? ImapSessionError)
         })
     }
     

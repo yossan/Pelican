@@ -11,7 +11,7 @@ import libetpan
 public struct MessageFlag: OptionSet {
     public let rawValue: Int
     public init(rawValue: Int) { self.rawValue = rawValue }
-    
+    public static let none             = MessageFlag(rawValue: 0)
     public static let seen             = MessageFlag(rawValue: 1 << 0)
     public static let answered         = MessageFlag(rawValue: 1 << 1)
     public static let flagged          = MessageFlag(rawValue: 1 << 2)
@@ -28,6 +28,9 @@ public struct MessageFlag: OptionSet {
 extension MessageFlag: CustomStringConvertible {
     public var description: String {
         var results: [String] = []
+        if self.contains(.none) {
+            results.append("none")
+        }
         if self.contains(.seen) {
             results.append("seen")
         }

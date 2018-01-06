@@ -11,6 +11,7 @@ class MessageCell: UITableViewCell {
 
     @IBOutlet var ibSubjectLabel: UILabel!
     @IBOutlet var ibFromLabel: UILabel!
+    @IBOutlet var ibDateLabel: UILabel!
     
     override func awakeFromNib() {
         super.awakeFromNib()

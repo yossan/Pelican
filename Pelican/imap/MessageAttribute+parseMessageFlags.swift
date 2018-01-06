@@ -10,8 +10,12 @@ import libetpan
 
 extension MessageAttribute {
     static func parseMessageFlags(mailimap_msg_att_dynamic flags: UnsafeMutablePointer<mailimap_msg_att_dynamic>) -> MessageFlag {
+        
+        guard let flagsList = flags.pointee.att_list else {
+            return .none
+        }
         var results: MessageFlag = []
-        for flagFetch in sequence(flags.pointee.att_list, of: mailimap_flag_fetch.self) {
+        for flagFetch in sequence(flagsList, of: mailimap_flag_fetch.self) {
             switch Int(flagFetch.pointee.fl_type) {
             case MAILIMAP_FLAG_FETCH_RECENT:
                 results.formUnion(.recent)

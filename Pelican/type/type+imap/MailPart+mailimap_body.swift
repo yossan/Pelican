@@ -1,15 +1,15 @@
 //
-//  MessageAttribute+parseMailPart.swift
+//  MailPart+mailimap_body.swift
 //  Pelican iOS
 //
-//  Created by yoshi-kou on 2018/01/03.
+//  Created by yoshi-kou on 2018/01/06.
 //
 
 import Foundation
 import libetpan
 
-extension MessageAttribute {
-    static func parseMailPart(mailimap_body body: UnsafeMutablePointer<mailimap_body>) -> MailPart {
+extension MailPart {
+    init(mailimap_body: UnsafeMutablePointer<mailimap_body>) {
         /*
          int bd_type;
          /* can be MAILIMAP_BODY_1PART or MAILIMAP_BODY_MPART */
@@ -18,18 +18,19 @@ extension MessageAttribute {
          struct mailimap_body_type_mpart * bd_body_mpart; /* can be NULL */
          } bd_data;
          */
-        switch Int(body.pointee.bd_type) {
+        
+        switch Int(mailimap_body.pointee.bd_type) {
         case MAILIMAP_BODY_MPART:
-            let mpart = body.pointee.bd_data.bd_body_mpart!
-            return parse(mailimap_body_type_mpart: mpart, partId: nil)
+            let mpart = mailimap_body.pointee.bd_data.bd_body_mpart!
+            self = .parse(mailimap_body_type_mpart: mpart, partId: nil)
         case MAILIMAP_BODY_1PART:
-            return parse(mailimap_body_type_1part: body.pointee.bd_data.bd_body_1part, partId: "1")
+            self = .parse(mailimap_body_type_1part: mailimap_body.pointee.bd_data.bd_body_1part, partId: "1")
         default:
             fatalError()
         }
     }
     
-    static private func parse(mailimap_body_type_mpart mpart: UnsafeMutablePointer<mailimap_body_type_mpart>, partId: String? = nil) -> MailPart {
+    private static func parse(mailimap_body_type_mpart mpart: UnsafeMutablePointer<mailimap_body_type_mpart>, partId: String? = nil) -> MailPart {
         /*
          struct mailimap_body_type_mpart {
          clist * bd_list; /* list of (struct mailimap_body *) */
@@ -53,7 +54,7 @@ extension MessageAttribute {
         
         var parts: [MailPart] = []
         for (i, body) in sequence(mpart.pointee.bd_list, of: mailimap_body.self).enumerated() {
-           
+            
             let part: MailPart = {
                 let id = partId == nil ? "\(i+1)" : "\(partId!).\(i+1)"
                 switch Int(body.pointee.bd_type) {
@@ -67,7 +68,7 @@ extension MessageAttribute {
                     fatalError()
                 }
             }()
-           
+            
             parts.append(part)
         }
         
@@ -81,7 +82,7 @@ extension MessageAttribute {
         return .multiPart(id: partId, type: type, parts: parts, boundary: boundary)
     }
     
-    static private func parse(mailimap_body_type_1part body: UnsafeMutablePointer<mailimap_body_type_1part>, partId: String) -> MailPart {
+    private static func parse(mailimap_body_type_1part body: UnsafeMutablePointer<mailimap_body_type_1part>, partId: String) -> MailPart {
         /*
          struct mailimap_body_type_1part {
          int bd_type;
@@ -98,30 +99,30 @@ extension MessageAttribute {
             
             let basic = body.pointee.bd_data.bd_type_basic!
             
-            let (mediaType, bodyFields) = parse(mailimap_body_type_basic: basic)
+            let (mediaType, bodyFields) = self.parse(mailimap_body_type_basic: basic)
             
             var disposition: Disposition = .unknown
             if let bd_ext_1part = body.pointee.bd_ext_1part,
                 let bd_disposition =  bd_ext_1part.pointee.bd_disposition {
-                disposition = parse(mailimap_body_fld_dsp: bd_disposition)
+                disposition = self.parse(mailimap_body_fld_dsp: bd_disposition)
             }
             
-            return .singlePart(id: partId, type: .basic(type: mediaType, disposition: disposition, fields: bodyFields))
+            return .singlePart(id: partId, data: .basic(type: mediaType, disposition: disposition, fields: bodyFields, rowData: nil))
             
         case MAILIMAP_BODY_TYPE_1PART_TEXT:
             let text =  body.pointee.bd_data.bd_type_text!
-            let (textType, bodyFields) = parse(mailimap_body_type_text: text)
-            return .singlePart(id: partId, type: .text(type: textType, fields: bodyFields))
+            let (textType, bodyFields) = self.parse(mailimap_body_type_text: text)
+            return .singlePart(id: partId, data: .text(type: textType, fields: bodyFields, rowData: nil))
         case MAILIMAP_BODY_TYPE_1PART_MSG:
             let msg = body.pointee.bd_data.bd_type_msg!
-            return parse(mailimap_body_type_msg: msg, partId: partId)
+            return self.parse(mailimap_body_type_msg: msg, partId: partId)
         default:
             fatalError()
             break
         }
     }
     
-    static private func parse(mailimap_body_type_basic body: UnsafeMutablePointer<mailimap_body_type_basic>) -> (MediaType, BodyFields) {
+    private static func parse(mailimap_body_type_basic body: UnsafeMutablePointer<mailimap_body_type_basic>) -> (MediaType, BodyFields) {
         /*
          struct mailimap_body_type_basic {
          struct mailimap_media_basic * bd_media_basic; /* != NULL */
@@ -130,15 +131,15 @@ extension MessageAttribute {
          */
         
         let media_basic = body.pointee.bd_media_basic!
-        let mediaType = parse(mailimap_media_basic: media_basic)
+        let mediaType = self.parse(mailimap_media_basic: media_basic)
         
         let bd_fields = body.pointee.bd_fields!
-        let bodyFields = parse(bd_fields: bd_fields)
+        let bodyFields = self.parse(bd_fields: bd_fields)
         
         return (mediaType, bodyFields)
     }
     
-    static private func parse(mailimap_media_basic media: UnsafeMutablePointer<mailimap_media_basic>) -> MediaType {
+    private static func parse(mailimap_media_basic media: UnsafeMutablePointer<mailimap_media_basic>) -> MediaType {
         /*
          struct mailimap_media_basic {
          int med_type;
@@ -165,7 +166,7 @@ extension MessageAttribute {
         }
     }
     
-    static private func parse(mailimap_body_type_text text: UnsafeMutablePointer<mailimap_body_type_text>) -> (TextType, BodyFields) {
+    private static func parse(mailimap_body_type_text text: UnsafeMutablePointer<mailimap_body_type_text>) -> (TextType, BodyFields) {
         /*
          struct mailimap_body_type_text {
          char * bd_media_text;                         /* != NULL */
@@ -185,13 +186,13 @@ extension MessageAttribute {
             }
         }()
         
-        let bodyFields = parse(bd_fields: text.pointee.bd_fields!)
+        let bodyFields = self.parse(bd_fields: text.pointee.bd_fields!)
         
         return (textType, bodyFields)
     }
     
     
-    static private func parse(mailimap_body_type_msg msg: UnsafeMutablePointer<mailimap_body_type_msg>, partId: String) -> MailPart {
+    private static func parse(mailimap_body_type_msg msg: UnsafeMutablePointer<mailimap_body_type_msg>, partId: String) -> MailPart {
         /*
          struct mailimap_body_type_msg {
          struct mailimap_body_fields * bd_fields; /* != NULL */
@@ -200,15 +201,15 @@ extension MessageAttribute {
          uint32_t bd_lines;
          };
          */
-        let bodyFields = parse(bd_fields: msg.pointee.bd_fields!)
-        let mailPart   = self.parseMailPart(mailimap_body: msg.pointee.bd_body!)
-        let messageHeader = parse(mailimap_envelope: msg.pointee.bd_envelope!)
+        let bodyFields = self.parse(bd_fields: msg.pointee.bd_fields!)
+        let mailPart   = MailPart(mailimap_body: msg.pointee.bd_body!)
+        let messageHeader = self.parse(mailimap_envelope: msg.pointee.bd_envelope!)
         
-        return .singlePart(id: partId, type: .message(header: messageHeader, fields: bodyFields, body: mailPart))
+        return .singlePart(id: partId, data: .message(header: messageHeader, fields: bodyFields, body: mailPart))
     }
     
     
-    static private func parse(bd_fields: UnsafeMutablePointer<mailimap_body_fields>) -> BodyFields {
+    private static func parse(bd_fields: UnsafeMutablePointer<mailimap_body_fields>) -> BodyFields {
         /*
          struct mailimap_body_fields {
          struct mailimap_body_fld_param * bd_parameter; /* can be NULL */
@@ -241,7 +242,7 @@ extension MessageAttribute {
         return bodyFields
     }
     
-    static private func parse(mailimap_body_fld_param param: UnsafeMutablePointer<mailimap_body_fld_param>) -> Dictionary<String, String> {
+    private static func parse(mailimap_body_fld_param param: UnsafeMutablePointer<mailimap_body_fld_param>) -> Dictionary<String, String> {
         /*
          struct mailimap_body_fld_param {
          clist * pa_list; /* list of (struct mailimap_single_body_fld_param *) */
@@ -257,7 +258,7 @@ extension MessageAttribute {
         return params
     }
     
-    static private func parse(mailimap_body_fld_dsp dsp: UnsafeMutablePointer<mailimap_body_fld_dsp>) -> Disposition {
+    private static func parse(mailimap_body_fld_dsp dsp: UnsafeMutablePointer<mailimap_body_fld_dsp>) -> Disposition {
         /*
          struct mailimap_body_fld_dsp {
          char * dsp_type;                     /* != NULL */
@@ -275,7 +276,7 @@ extension MessageAttribute {
         }
     }
     
-    static private func parse(mailimap_body_fld_enc enc: UnsafeMutablePointer<mailimap_body_fld_enc>) -> TransferEncoding {
+    private static func parse(mailimap_body_fld_enc enc: UnsafeMutablePointer<mailimap_body_fld_enc>) -> TransferEncoding {
         /*
          struct mailimap_body_fld_enc {
          int enc_type;
@@ -299,7 +300,7 @@ extension MessageAttribute {
         }
     }
     
-    static private func parse(mailimap_envelope envelope: UnsafeMutablePointer<mailimap_envelope>) -> MessageHeader {
+    private static func parse(mailimap_envelope envelope: UnsafeMutablePointer<mailimap_envelope>) -> MessageHeader {
         /*
          struct mailimap_envelope {
          char * env_date;                             /* can be NULL */
@@ -330,34 +331,34 @@ extension MessageAttribute {
         }
         
         if let env_from = envelope.pointee.env_from {
-            messageHeader.from = parse(mailimap_address_list: env_from.pointee.frm_list)
+            messageHeader.from = self.parse(mailimap_address_list: env_from.pointee.frm_list)
             
         }
         
         if let env_sender = envelope.pointee.env_sender {
-            messageHeader.sender = parse(mailimap_address_list: env_sender.pointee.snd_list).first
+            messageHeader.sender = self.parse(mailimap_address_list: env_sender.pointee.snd_list).first
         }
         
         if let reply_to = envelope.pointee.env_reply_to {
-            messageHeader.to = parse(mailimap_address_list: reply_to.pointee.rt_list).map {
+            messageHeader.to = self.parse(mailimap_address_list: reply_to.pointee.rt_list).map {
                 return .mailBox($0)
             }
         }
         
         if let env_to = envelope.pointee.env_to {
-            messageHeader.to = parse(mailimap_address_list: env_to.pointee.to_list).map {
+            messageHeader.to = self.parse(mailimap_address_list: env_to.pointee.to_list).map {
                 return .mailBox($0)
             }
         }
         
         if let env_cc = envelope.pointee.env_cc {
-            messageHeader.cc = parse(mailimap_address_list: env_cc.pointee.cc_list).map {
+            messageHeader.cc = self.parse(mailimap_address_list: env_cc.pointee.cc_list).map {
                 return .mailBox($0)
             }
         }
         
         if let env_bcc = envelope.pointee.env_bcc {
-            messageHeader.bcc = parse(mailimap_address_list: env_bcc.pointee.bcc_list).map {
+            messageHeader.bcc = self.parse(mailimap_address_list: env_bcc.pointee.bcc_list).map {
                 return .mailBox($0)
             }
         }
@@ -368,7 +369,7 @@ extension MessageAttribute {
         return messageHeader
     }
     
-    static private func parse(mailimap_address_list list: UnsafeMutablePointer<clist>) -> [AddressMailBox] {
+    private static func parse(mailimap_address_list list: UnsafeMutablePointer<clist>) -> [AddressMailBox] {
         var result: [AddressMailBox] = []
         for imap_address in sequence(list, of: mailimap_address.self) {
             guard let address = self.parse(mailimap_address: imap_address) else {
@@ -380,7 +381,7 @@ extension MessageAttribute {
         return result
     }
     
-    static private func parse(mailimap_address address: UnsafeMutablePointer<mailimap_address>) -> AddressMailBox? {
+    private static func parse(mailimap_address address: UnsafeMutablePointer<mailimap_address>) -> AddressMailBox? {
         /*
          struct mailimap_address {
          char * ad_personal_name; /* can be NULL */

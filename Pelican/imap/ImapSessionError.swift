@@ -54,13 +54,13 @@ public enum ImapSessionError: Int, Error {
     case SSL
     case NEEDS_MORE_DATA
     case CUSTOM_COMMAND
-    case Unknown
+    case UNKNOWN
     
     init(_ value: Int32) {
         if let r =  ImapSessionError(rawValue: Int(value)) {
             self = r
         } else {
-            self = .Unknown
+            self = .UNKNOWN
         }
     }
     

@@ -8,7 +8,7 @@
 import UIKit
 import Pelican
 
-class MessageListViewController: UITableViewController, ImapSessionViewContentProtocol {
+class MessageListViewController: UITableViewController {
 
     var sessionController: ImapSessionViewController {
         return self.parent?.parent as! ImapSessionViewController
@@ -25,17 +25,24 @@ class MessageListViewController: UITableViewController, ImapSessionViewContentPr
         // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
         // self.navigationItem.rightBarButtonItem = self.editButtonItem
         
-        self.sessionController.command(async: { (imap) in
-            imap.fetchLast(num: 20, options: [.messageHeader, .bodystructure]) { (message) in
-                
+        self.sessionController.command({ (imap) in
+            try imap.fetchLast(num: 20, options: [.messageHeader, /*.bodystructure*/]) { (message) in
                 OperationQueue.main.addOperation {
-                    self.messages.append(message)
-                    self.tableView.reloadData()
+                    self.appendMessage(message)
                 }
-            }
-        },success: { (_, _) in
-            
+            }.check()
+        }, catched: { (error) in
+            self.sessionController.handleImapError(error as? ImapSessionError)
         })
+    }
+    
+    func appendMessage(_ message: Message) {
+        guard message.header != nil else { return }
+        self.tableView.beginUpdates()
+        self.messages.append(message)
+        let appendingIndexPath = IndexPath(row: self.messages.count-1, section: 0)
+        self.tableView.insertRows(at: [appendingIndexPath], with: .top)
+        self.tableView.endUpdates()
     }
 
     override func didReceiveMemoryWarning() {
@@ -59,16 +66,23 @@ class MessageListViewController: UITableViewController, ImapSessionViewContentPr
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "MessageCell", for: indexPath) as! MessageCell
 
-        let header = self.messages[indexPath.row].header
+        let header = self.messages[indexPath.row].header!
         cell.ibSubjectLabel.text = header.subject
         cell.ibFromLabel.text = header.from.first!.displayName ?? header.from.first!.email
 
+        if let date = header.date {
+            let dateFormatter = DateFormatter()
+            dateFormatter.calendar = Calendar(identifier: .gregorian)
+            dateFormatter.dateStyle = .short
+            dateFormatter.timeStyle = .short
+            cell.ibDateLabel.text = dateFormatter.string(from: date)
+        } else {
+            cell.ibDateLabel.isHidden = true
+        }
         return cell
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let message = self.messages[indexPath.row]
-        print(message)
     }
     
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
@@ -111,14 +125,19 @@ class MessageListViewController: UITableViewController, ImapSessionViewContentPr
     }
     */
 
-    /*
     // MARK: - Navigation
 
     // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         // Get the new view controller using segue.destinationViewController.
         // Pass the selected object to the new view controller.
+        if segue.identifier == "MessageDetailViewController",
+            let selectedIndex = self.tableView.indexPathForSelectedRow {
+            
+            let dest = segue.destination as! MessageDetailViewController
+            let part = self.messages[selectedIndex.row]
+            dest.message = part
+        }
     }
-    */
 
 }

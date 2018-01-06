@@ -8,6 +8,9 @@
 import Foundation
 import libetpan
 
+/**
+ ImapSession is not threadsafe.
+ */
 public class ImapSession {
     public static let shared: ImapSession = ImapSession()
     let imap: UnsafeMutablePointer<mailimap>
@@ -29,7 +32,7 @@ public class ImapSession {
     
     public func list(withResult result: inout [String]) -> ImapSessionError {
         
-        return .Unknown
+        return .UNKNOWN
     }
     
     public func fetchFolders() -> [String]? {
@@ -104,26 +107,17 @@ public class ImapSession {
     public func fetch(range: Range<UInt32>, options: FetchOptions, handler: @escaping (Message)->()) -> ImapSessionError {
         
         var fetchContext = FetchContext(options: options, handler: handler)
-        mailimap_set_msg_att_handler(imap, { (msgAtt, rawContext) in
-            let fetchContext = rawContext!.bindMemory(to: FetchContext.self, capacity: 1)
-            
-            var message = Message()
-            MessageAttribute.parse(msgAtt!) { (result)in
-                switch result {
-                case .uid(let value):
-                    message.uid = value
-                case .messageFlags(let flags):
-                    message.flags = flags
-                case .messageHeader(let header):
-                    message.header = header
-                case .mailPart(let part):
-                    message.body = part
-                }
+        mailimap_set_msg_att_handler(imap, { (messageAttribute, rawContext) in
+            guard let messageAttribute = messageAttribute,
+                let message = Message(mailimap_msg_att: messageAttribute) else {
+                    return
             }
             
+            let fetchContext = rawContext!.bindMemory(to: FetchContext.self, capacity: 1)
             fetchContext.pointee.handler(message)
             
         }, &fetchContext)
+        defer { mailimap_set_msg_att_handler(imap, nil, nil) }
         
         let set = mailimap_set_new_empty();
         mailimap_set_add_interval(set, range.lowerBound, range.upperBound)
@@ -159,10 +153,51 @@ public class ImapSession {
         return ImapSessionError(r)
     }
     
+    public func fetchData(uid: UInt32, partId: String, results: UnsafeMutablePointer<Data>?) -> ImapSessionError {
+        let set = mailimap_set_new_single(uid)
+        defer { mailimap_set_free(set) }
+        
+        var fetchType = mailimap_fetch_type_new_fetch_att_list_empty()
+        defer { mailimap_fetch_type_free(fetchType) }
+        
+        let sectionId = partId.split(separator: ".").map{Int32($0)!}.reduce(into: clist_new()) { (result, partId) in
+            var partId = partId
+            clist_append(result, &partId)
+            } as UnsafeMutablePointer<clist>
+//        defer { clist_free(sectionId) }
+        
+        let sectionPart = mailimap_section_part_new(sectionId)
+        let section = mailimap_section_new_part(sectionPart)
+        let bodyPeekSection = mailimap_fetch_att_new_body_peek_section(section)
+        fetchType = mailimap_fetch_type_new_fetch_att(bodyPeekSection)
+
+        var fetchResult: UnsafeMutablePointer<clist>? = clist_new()
+        defer { mailimap_fetch_list_free(fetchResult) }
+        let r = mailimap_uid_fetch(imap, set, fetchType, &fetchResult)
+        guard r <= MAIL_NO_ERROR_NON_AUTHENTICATED else {
+            return ImapSessionError(r)
+        }
+        
+        if let message = sequence(fetchResult!, of: mailimap_msg_att.self).first {
+            print(clist_count(message.pointee.att_list))
+            
+            if let attribute = sequence(message.pointee.att_list, of: mailimap_msg_att_item.self).first {
+                if attribute.pointee.att_type == MAILIMAP_MSG_ATT_ITEM_STATIC && attribute.pointee.att_data.att_static!.pointee.att_type == MAILIMAP_MSG_ATT_BODY_SECTION {
+                    if let content = attribute.pointee.att_data.att_static.pointee.att_data.att_body_section.pointee.sec_body_part {
+                        print(String(cString: content))
+                    } else {
+                        NSLog("fetching data failure")
+                    }
+                }
+            }
+        }
+        
+        return ImapSessionError(r)
+    }
+    
     func fetchMessages() -> Bool {
         
         mailimap_set_msg_att_handler(imap, { (message, context) in
-            print("こいこい")
         }, nil/*contextを渡す*/)
         
         // 結果を格納

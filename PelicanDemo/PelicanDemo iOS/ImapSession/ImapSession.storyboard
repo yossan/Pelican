@@ -70,19 +70,29 @@
                                             <nil key="textColor"/>
                                             <nil key="highlightedColor"/>
                                         </label>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="DqA-pl-YFb">
+                                            <rect key="frame" x="333" y="8" width="32" height="12"/>
+                                            <fontDescription key="fontDescription" name="HiraMaruProN-W4" family="Hiragino Maru Gothic ProN" pointSize="12"/>
+                                            <nil key="textColor"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
                                     </subviews>
                                     <constraints>
                                         <constraint firstItem="VHo-gK-LUb" firstAttribute="top" secondItem="4mB-cs-eTa" secondAttribute="top" constant="10" id="ClD-rf-rFz"/>
                                         <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="TW8-KV-4aX" secondAttribute="trailing" constant="10" id="Fmd-hp-jjd"/>
                                         <constraint firstItem="VHo-gK-LUb" firstAttribute="leading" secondItem="4mB-cs-eTa" secondAttribute="leading" constant="10" id="Qk0-8F-HoQ"/>
-                                        <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="VHo-gK-LUb" secondAttribute="trailing" constant="10" id="Vh5-CQ-bXy"/>
                                         <constraint firstItem="TW8-KV-4aX" firstAttribute="top" secondItem="VHo-gK-LUb" secondAttribute="bottom" constant="10" id="Ytm-OI-9Xc"/>
+                                        <constraint firstItem="DqA-pl-YFb" firstAttribute="top" secondItem="4mB-cs-eTa" secondAttribute="top" constant="8" id="bZC-AD-QYh"/>
+                                        <constraint firstItem="DqA-pl-YFb" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="VHo-gK-LUb" secondAttribute="trailing" constant="5" id="gLS-I2-Vgw"/>
                                         <constraint firstItem="TW8-KV-4aX" firstAttribute="leading" secondItem="4mB-cs-eTa" secondAttribute="leading" constant="10" id="gTm-b0-Qgt"/>
+                                        <constraint firstAttribute="trailing" secondItem="DqA-pl-YFb" secondAttribute="trailing" constant="10" id="i2L-ad-a6r"/>
                                     </constraints>
                                 </tableViewCellContentView>
                                 <connections>
+                                    <outlet property="ibDateLabel" destination="DqA-pl-YFb" id="A21-tM-DPy"/>
                                     <outlet property="ibFromLabel" destination="TW8-KV-4aX" id="gdP-RB-LP6"/>
                                     <outlet property="ibSubjectLabel" destination="VHo-gK-LUb" id="3in-mO-jmH"/>
+                                    <segue destination="njh-A9-Duy" kind="show" identifier="MessageDetailViewController" id="4ib-KB-FGH"/>
                                 </connections>
                             </tableViewCell>
                         </prototypes>
@@ -96,6 +106,34 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="ooq-Nm-1Fr" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="1376.8" y="-197.45127436281859"/>
+        </scene>
+        <!--Message Detail View Controller-->
+        <scene sceneID="Vkg-h5-EeO">
+            <objects>
+                <tableViewController storyboardIdentifier="MessageDetailViewController" id="njh-A9-Duy" customClass="MessageDetailViewController" customModule="PelicanDemo_iOS" customModuleProvider="target" sceneMemberID="viewController">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" id="8sP-Yz-80k">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <prototypes>
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" id="gD3-Qm-rol">
+                                <rect key="frame" x="0.0" y="28" width="375" height="44"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="gD3-Qm-rol" id="lSo-T6-oHd">
+                                    <rect key="frame" x="0.0" y="0.0" width="375" height="43.5"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                </tableViewCellContentView>
+                            </tableViewCell>
+                        </prototypes>
+                        <connections>
+                            <outlet property="dataSource" destination="njh-A9-Duy" id="8ic-Vu-gr3"/>
+                            <outlet property="delegate" destination="njh-A9-Duy" id="d1F-V6-eE0"/>
+                        </connections>
+                    </tableView>
+                </tableViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="SnY-N4-7Xr" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="2137" y="-197"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="MZB-SN-JRn">

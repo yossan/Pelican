@@ -8,10 +8,11 @@
 import Foundation
 import UIKit
 
-/** Application file structure manager
+/**
+ # Application file structure manager
  + Application Support/
    + PelicanDemo/
-     + StoredData/ token.dat, userInfo.dat
+     + StoredData/ userInfo.dat
  */
 class Paths {
     
@@ -21,6 +22,5 @@ class Paths {
     
     // MARK: Files in StoredData
     private static let storedData: File = .sub("StoredData", in: appDir)
-    static let tokenFile: File = .file("token.dat", in: storedData)
     static let userFile : File = .file("userInfo.dat", in: storedData)
 }

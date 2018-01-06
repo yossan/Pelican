@@ -10,7 +10,12 @@ import Pelican
 
 class MessageDetailViewController: UITableViewController {
 
-    var content: MailPart!
+    var message: Message! = nil
+    var messageBody: MessageBody? = nil
+    
+    var sessionController: ImapSessionViewController {
+        return self.parent?.parent as! ImapSessionViewController
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -20,6 +25,41 @@ class MessageDetailViewController: UITableViewController {
 
         // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
         // self.navigationItem.rightBarButtonItem = self.editButtonItem
+        
+        self.sessionController.command({ (imap) in
+            let messageBody = try self.makeMessageBody()
+            
+            let textPart = {
+                if let htmlPart = messageBody.findText(.html) {
+                    return htmlPart
+                } else {
+                    return messageBody.texts[0]
+                }
+            }() as TextData
+            
+            let result: UnsafeMutablePointer<Data> = UnsafeMutablePointer<Data>.allocate(capacity: 1)
+            try imap.fetchData(uid: UInt32(self.message.uid), partId: textPart.partId, results: result).check()
+               
+        }) { (error) in
+            switch error {
+            case is MessageDetailError: break
+            case is ImapSessionError:
+                self.sessionController.handleImapError(error as? ImapSessionError)
+            default: break
+            }
+        }
+    }
+    
+    func makeMessageBody() throws -> MessageBody {
+        guard let part =  self.message.body,
+            let messageBody = MessageBody(root: part) else {
+                throw MessageDetailError.notSupported
+        }
+        return messageBody
+    }
+    
+    enum MessageDetailError: Error {
+        case notSupported
     }
 
     override func didReceiveMemoryWarning() {
@@ -27,49 +67,8 @@ class MessageDetailViewController: UITableViewController {
         // Dispose of any resources that can be recreated.
     }
     
-    func fetchContent(_ part: MailPart) {
-        switch part {
-        case let .multiPart(id, type, parts, _):
-            if id == nil {
-                parts.forEach({ (part) in  
-                    switch part {
-                    case let .multiPart(_, type, parts, _):
-                        switch type {
-                        case .alternative:
-                            // prats[0] or parts[1]
-                            break
-                        case .related:
-                            parts.forEach({ (part) in
-                                self.fetchContent(part)
-                            })
-                        default:
-                            break
-                        }
-                    case .singlePart:
-                        break
-                    }
-                })
-            } else {
-                switch type {
-                case .alternative:
-                    // prats[0] or parts[1]
-                    break
-                case .related:
-                    parts.forEach({ (part) in
-                        self.fetchContent(part)
-                    })
-                default:
-                    break
-                }
-            }
-            break
-        case let .singlePart(id, type):
-            switch type {
-            case let .basic(type, disposition, fields): break
-            case let .text(type, fields): break
-            case .message: break
-            }
-        }
+    func fetchContents() {
+        
     }
 
     // MARK: - Table view data source

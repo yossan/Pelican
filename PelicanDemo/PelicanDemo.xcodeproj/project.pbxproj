@@ -14,6 +14,7 @@
 		4AA1DE5B1FFDCCCC00AC9FC7 /* Pelican.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4AA1DE581FFDCCB100AC9FC7 /* Pelican.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		4AA1DE5C1FFDCCCC00AC9FC7 /* Result.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4AA1DE591FFDCCB100AC9FC7 /* Result.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		4AA1DE5E1FFE101E00AC9FC7 /* MessageDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AA1DE5D1FFE101E00AC9FC7 /* MessageDetailViewController.swift */; };
+		4AA1DE621FFF2C5500AC9FC7 /* MessageBody.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AA1DE611FFF2C5500AC9FC7 /* MessageBody.swift */; };
 		4AC69B6A1FFCD08900341C83 /* MessageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AC69B681FFCD08900341C83 /* MessageCell.swift */; };
 		4AD0338E1FEE38CA00084911 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AD0338D1FEE38CA00084911 /* AppDelegate.swift */; };
 		4AD033931FEE38CA00084911 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4AD033911FEE38CA00084911 /* Main.storyboard */; };
@@ -33,7 +34,6 @@
 		4AFF4FBD1FF77F0B00C2FC72 /* AuthorizationSessionViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4AFF4FBB1FF77F0B00C2FC72 /* AuthorizationSessionViewController.xib */; };
 		4AFF4FC01FF77F2C00C2FC72 /* ImapSession.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4AFF4FBF1FF77F2C00C2FC72 /* ImapSession.storyboard */; };
 		4AFF4FC21FF77F4F00C2FC72 /* ImapSessionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AFF4FC11FF77F4F00C2FC72 /* ImapSessionViewController.swift */; };
-		4AFF4FC41FF77FCD00C2FC72 /* ImapSessionViewContentProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AFF4FC31FF77FCD00C2FC72 /* ImapSessionViewContentProtocol.swift */; };
 		4AFF4FC61FF78BDE00C2FC72 /* AuthorizationSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AFF4FC51FF78BDE00C2FC72 /* AuthorizationSession.swift */; };
 		4AFF4FC91FF7C5F000C2FC72 /* StoredData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AFF4FC81FF7C5F000C2FC72 /* StoredData.swift */; };
 		4AFF4FCB1FF7E84200C2FC72 /* Paths.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AFF4FCA1FF7E84200C2FC72 /* Paths.swift */; };
@@ -61,6 +61,7 @@
 		4AA1DE581FFDCCB100AC9FC7 /* Pelican.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Pelican.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		4AA1DE591FFDCCB100AC9FC7 /* Result.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Result.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		4AA1DE5D1FFE101E00AC9FC7 /* MessageDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageDetailViewController.swift; sourceTree = "<group>"; };
+		4AA1DE611FFF2C5500AC9FC7 /* MessageBody.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageBody.swift; sourceTree = "<group>"; };
 		4AC69B681FFCD08900341C83 /* MessageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageCell.swift; sourceTree = "<group>"; };
 		4AD0338A1FEE38CA00084911 /* PelicanDemo iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "PelicanDemo iOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		4AD0338D1FEE38CA00084911 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -82,7 +83,6 @@
 		4AFF4FBB1FF77F0B00C2FC72 /* AuthorizationSessionViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = AuthorizationSessionViewController.xib; sourceTree = "<group>"; };
 		4AFF4FBF1FF77F2C00C2FC72 /* ImapSession.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = ImapSession.storyboard; sourceTree = "<group>"; };
 		4AFF4FC11FF77F4F00C2FC72 /* ImapSessionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImapSessionViewController.swift; sourceTree = "<group>"; };
-		4AFF4FC31FF77FCD00C2FC72 /* ImapSessionViewContentProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImapSessionViewContentProtocol.swift; sourceTree = "<group>"; };
 		4AFF4FC51FF78BDE00C2FC72 /* AuthorizationSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthorizationSession.swift; sourceTree = "<group>"; };
 		4AFF4FC81FF7C5F000C2FC72 /* StoredData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoredData.swift; sourceTree = "<group>"; };
 		4AFF4FCA1FF7E84200C2FC72 /* Paths.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Paths.swift; sourceTree = "<group>"; };
@@ -173,11 +173,11 @@
 			children = (
 				4AFF4FBF1FF77F2C00C2FC72 /* ImapSession.storyboard */,
 				4AFF4FC11FF77F4F00C2FC72 /* ImapSessionViewController.swift */,
-				4AFF4FC31FF77FCD00C2FC72 /* ImapSessionViewContentProtocol.swift */,
 				4AD033D11FEE5ADF00084911 /* FolderListViewController.swift */,
 				4AD033DC1FEF4D2400084911 /* MessageListViewController.swift */,
 				4AC69B681FFCD08900341C83 /* MessageCell.swift */,
 				4AA1DE5D1FFE101E00AC9FC7 /* MessageDetailViewController.swift */,
+				4AA1DE611FFF2C5500AC9FC7 /* MessageBody.swift */,
 			);
 			path = ImapSession;
 			sourceTree = "<group>";
@@ -279,12 +279,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				4AD31D2F1FF9080F009A2CDB /* User.swift in Sources */,
-				4AFF4FC41FF77FCD00C2FC72 /* ImapSessionViewContentProtocol.swift in Sources */,
 				4AFF4FCE1FF7F2E900C2FC72 /* File.swift in Sources */,
 				4AD31D3A1FF9D610009A2CDB /* AuthorizaionSession+State.swift in Sources */,
 				4AD31D381FF92BC6009A2CDB /* AppConfiguration.swift in Sources */,
 				4AA1DE5E1FFE101E00AC9FC7 /* MessageDetailViewController.swift in Sources */,
 				4AD31D341FF9295C009A2CDB /* GmailConfiguration.swift in Sources */,
+				4AA1DE621FFF2C5500AC9FC7 /* MessageBody.swift in Sources */,
 				4AD31D311FF909B7009A2CDB /* Token+.swift in Sources */,
 				4AFF4FC61FF78BDE00C2FC72 /* AuthorizationSession.swift in Sources */,
 				4AD31D361FF92B93009A2CDB /* Configuration.swift in Sources */,
