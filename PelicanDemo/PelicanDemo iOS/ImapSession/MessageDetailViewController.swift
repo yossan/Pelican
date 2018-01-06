@@ -8,6 +8,21 @@
 import UIKit
 import Pelican
 
+extension MailPart {
+    func findText(prefer type: TextType) -> MailPart? {
+        
+        if case let .multiPart(_, type, parts, _) = self, type == .alternative {
+            // select prefer type
+            
+        } else if case let .singlePart(_, data) = self,
+            case let .text (_, _, _) = data {
+            // plain or html
+            return self
+        }
+        return nil
+    }
+}
+
 class MessageDetailViewController: UITableViewController {
 
     var message: Message! = nil
@@ -15,6 +30,22 @@ class MessageDetailViewController: UITableViewController {
     
     var sessionController: ImapSessionViewController {
         return self.parent?.parent as! ImapSessionViewController
+    }
+    
+    func downloadPart(_ root: MailPart) {
+        switch root {
+        case let .multiPart(id, type, parts, _):
+            switch type {
+            case .related:
+                parts.forEach({ (subPart) in
+                    self.downloadPart(subPart)
+                })
+            case .alternative:
+                let textPart = root.findText(prefer: .html)
+                
+            }
+        case let .singlePart(id, data): break
+        }
     }
     
     override func viewDidLoad() {
@@ -27,6 +58,7 @@ class MessageDetailViewController: UITableViewController {
         // self.navigationItem.rightBarButtonItem = self.editButtonItem
         
         self.sessionController.command({ (imap) in
+            
             let messageBody = try self.makeMessageBody()
             
             let textPart = {
@@ -37,9 +69,10 @@ class MessageDetailViewController: UITableViewController {
                 }
             }() as TextData
             
-            let result: UnsafeMutablePointer<Data> = UnsafeMutablePointer<Data>.allocate(capacity: 1)
-            try imap.fetchData(uid: UInt32(self.message.uid), partId: textPart.partId, results: result).check()
-               
+            try imap.fetchData(uid: UInt32(self.message.uid), partId: textPart.partId, completion: { (data) in
+                
+            })
+            
         }) { (error) in
             switch error {
             case is MessageDetailError: break

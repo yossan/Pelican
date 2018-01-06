@@ -26,7 +26,7 @@ class MessageListViewController: UITableViewController {
         // self.navigationItem.rightBarButtonItem = self.editButtonItem
         
         self.sessionController.command({ (imap) in
-            try imap.fetchLast(num: 20, options: [.messageHeader, /*.bodystructure*/]) { (message) in
+            try imap.fetchLast(num: 20, options: [.messageHeader, .bodystructure]) { (message) in
                 OperationQueue.main.addOperation {
                     self.appendMessage(message)
                 }
@@ -76,6 +76,7 @@ class MessageListViewController: UITableViewController {
             dateFormatter.dateStyle = .short
             dateFormatter.timeStyle = .short
             cell.ibDateLabel.text = dateFormatter.string(from: date)
+            cell.ibDateLabel.isHidden = false
         } else {
             cell.ibDateLabel.isHidden = true
         }

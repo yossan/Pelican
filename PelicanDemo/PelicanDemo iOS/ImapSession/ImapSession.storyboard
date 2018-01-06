@@ -58,19 +58,19 @@
                                     <rect key="frame" x="0.0" y="0.0" width="375" height="72.5"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
-                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Subject" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="VHo-gK-LUb">
-                                            <rect key="frame" x="10" y="10" width="63" height="17"/>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="From" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="VHo-gK-LUb">
+                                            <rect key="frame" x="10" y="10" width="44" height="17"/>
                                             <fontDescription key="fontDescription" name="HiraMaruProN-W4" family="Hiragino Maru Gothic ProN" pointSize="17"/>
                                             <nil key="textColor"/>
                                             <nil key="highlightedColor"/>
                                         </label>
-                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="From" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="TW8-KV-4aX">
-                                            <rect key="frame" x="10" y="37" width="44" height="17"/>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Subject" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="TW8-KV-4aX">
+                                            <rect key="frame" x="10" y="37" width="63" height="17"/>
                                             <fontDescription key="fontDescription" name="HiraMaruProN-W4" family="Hiragino Maru Gothic ProN" pointSize="17"/>
                                             <nil key="textColor"/>
                                             <nil key="highlightedColor"/>
                                         </label>
-                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="DqA-pl-YFb">
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="1000" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="DqA-pl-YFb">
                                             <rect key="frame" x="333" y="8" width="32" height="12"/>
                                             <fontDescription key="fontDescription" name="HiraMaruProN-W4" family="Hiragino Maru Gothic ProN" pointSize="12"/>
                                             <nil key="textColor"/>
@@ -90,8 +90,8 @@
                                 </tableViewCellContentView>
                                 <connections>
                                     <outlet property="ibDateLabel" destination="DqA-pl-YFb" id="A21-tM-DPy"/>
-                                    <outlet property="ibFromLabel" destination="TW8-KV-4aX" id="gdP-RB-LP6"/>
-                                    <outlet property="ibSubjectLabel" destination="VHo-gK-LUb" id="3in-mO-jmH"/>
+                                    <outlet property="ibFromLabel" destination="VHo-gK-LUb" id="seZ-14-aS9"/>
+                                    <outlet property="ibSubjectLabel" destination="TW8-KV-4aX" id="uFd-vb-MS4"/>
                                     <segue destination="njh-A9-Duy" kind="show" identifier="MessageDetailViewController" id="4ib-KB-FGH"/>
                                 </connections>
                             </tableViewCell>

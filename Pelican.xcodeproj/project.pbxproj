@@ -33,6 +33,8 @@
 		4AE3905B200065B0001D479F /* mailimap_msg_att_body_section+parse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AE3905A200065B0001D479F /* mailimap_msg_att_body_section+parse.swift */; };
 		4AE3905D20006EC9001D479F /* MessageHeader+mailimf_fields.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AE3905C20006EC9001D479F /* MessageHeader+mailimf_fields.swift */; };
 		4AE3905F200071D0001D479F /* MailPart+mailimap_body.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AE3905E200071D0001D479F /* MailPart+mailimap_body.swift */; };
+		4AE3906320009650001D479F /* mailimap+fetch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AE3906220009650001D479F /* mailimap+fetch.swift */; };
+		4AE3906420009650001D479F /* mailimap+fetch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AE3906220009650001D479F /* mailimap+fetch.swift */; };
 		4AFF4F761FF5C0E800C2FC72 /* MailPart.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AFF4F751FF5C0E800C2FC72 /* MailPart.swift */; };
 		4AFF4F771FF5C0E800C2FC72 /* MailPart.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AFF4F751FF5C0E800C2FC72 /* MailPart.swift */; };
 		4AFF4F791FF5C10600C2FC72 /* Message.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AFF4F781FF5C10600C2FC72 /* Message.swift */; };
@@ -61,14 +63,8 @@
 		4A46061D1FFF67D900DE63E5 /* Sequence+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Sequence+.swift"; sourceTree = "<group>"; };
 		4A46CE571FF2A12A00837B6A /* libiconv.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libiconv.tbd; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS11.2.sdk/usr/lib/libiconv.tbd; sourceTree = DEVELOPER_DIR; };
 		4A4B82061FF3863400D3C072 /* MessageFlags.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageFlags.swift; sourceTree = "<group>"; };
-		4A4B82081FF3886000D3C072 /* mailimap_msg_att_static.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = mailimap_msg_att_static.swift; sourceTree = "<group>"; };
-		4A4B820A1FF3C69E00D3C072 /* mime.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = mime.swift; sourceTree = "<group>"; };
 		4A773F9B1FFFA8BF000ECF50 /* mailimap_msg_att_item+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "mailimap_msg_att_item+.swift"; sourceTree = "<group>"; };
 		4A773FA720004D5D000ECF50 /* Message+mailimap_msg_att.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Message+mailimap_msg_att.swift"; sourceTree = "<group>"; };
-		4AC69B581FFB831D00341C83 /* MessageAttribute.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageAttribute.swift; sourceTree = "<group>"; };
-		4AC69B5C1FFCAD2300341C83 /* MessageAttribute+parseHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MessageAttribute+parseHeader.swift"; sourceTree = "<group>"; };
-		4AC69B641FFCB9E700341C83 /* MessageAttribute+parseMessageFlags.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MessageAttribute+parseMessageFlags.swift"; sourceTree = "<group>"; };
-		4AC69B661FFCBD9400341C83 /* MessageAttribute+parseBody.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MessageAttribute+parseBody.swift"; sourceTree = "<group>"; };
 		4AD0335D1FEE142D00084911 /* Pelican.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pelican.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		4AD033601FEE142D00084911 /* Pelican_iOS.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Pelican_iOS.h; sourceTree = "<group>"; };
 		4AD033611FEE142D00084911 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -84,6 +80,7 @@
 		4AE3905A200065B0001D479F /* mailimap_msg_att_body_section+parse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "mailimap_msg_att_body_section+parse.swift"; sourceTree = "<group>"; };
 		4AE3905C20006EC9001D479F /* MessageHeader+mailimf_fields.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MessageHeader+mailimf_fields.swift"; sourceTree = "<group>"; };
 		4AE3905E200071D0001D479F /* MailPart+mailimap_body.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MailPart+mailimap_body.swift"; sourceTree = "<group>"; };
+		4AE3906220009650001D479F /* mailimap+fetch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "mailimap+fetch.swift"; sourceTree = "<group>"; };
 		4AFF4F721FF5C0DB00C2FC72 /* MessageHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageHeader.swift; sourceTree = "<group>"; };
 		4AFF4F751FF5C0E800C2FC72 /* MailPart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MailPart.swift; sourceTree = "<group>"; };
 		4AFF4F781FF5C10600C2FC72 /* Message.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Message.swift; sourceTree = "<group>"; };
@@ -176,13 +173,8 @@
 			children = (
 				4AD033741FEE14FC00084911 /* ImapSession.swift */,
 				4AFF4FB51FF769AE00C2FC72 /* ImapSessionError.swift */,
+				4AE3906120009621001D479F /* type+utils */,
 				4A773F9D1FFFB4F4000ECF50 /* type+parse */,
-				4AC69B581FFB831D00341C83 /* MessageAttribute.swift */,
-				4AC69B5C1FFCAD2300341C83 /* MessageAttribute+parseHeader.swift */,
-				4AC69B641FFCB9E700341C83 /* MessageAttribute+parseMessageFlags.swift */,
-				4AC69B661FFCBD9400341C83 /* MessageAttribute+parseBody.swift */,
-				4A4B82081FF3886000D3C072 /* mailimap_msg_att_static.swift */,
-				4A4B820A1FF3C69E00D3C072 /* mime.swift */,
 			);
 			path = imap;
 			sourceTree = "<group>";
@@ -217,6 +209,14 @@
 				4AE3905E200071D0001D479F /* MailPart+mailimap_body.swift */,
 			);
 			path = "type+imap";
+			sourceTree = "<group>";
+		};
+		4AE3906120009621001D479F /* type+utils */ = {
+			isa = PBXGroup;
+			children = (
+				4AE3906220009650001D479F /* mailimap+fetch.swift */,
+			);
+			path = "type+utils";
 			sourceTree = "<group>";
 		};
 		4AFF4F711FF5C0B400C2FC72 /* type */ = {
@@ -368,6 +368,7 @@
 				4AD033751FEE14FC00084911 /* ImapSession.swift in Sources */,
 				4A46061E1FFF67D900DE63E5 /* Sequence+.swift in Sources */,
 				4AE3905B200065B0001D479F /* mailimap_msg_att_body_section+parse.swift in Sources */,
+				4AE3906320009650001D479F /* mailimap+fetch.swift in Sources */,
 				4AE3905D20006EC9001D479F /* MessageHeader+mailimf_fields.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -384,6 +385,7 @@
 				4A18B2EE20005B6F00FA5BE3 /* mailimap_msg_att+parse.swift in Sources */,
 				4AD033A41FEE3B2A00084911 /* ImapSession.swift in Sources */,
 				4A773FA920004D5D000ECF50 /* Message+mailimap_msg_att.swift in Sources */,
+				4AE3906420009650001D479F /* mailimap+fetch.swift in Sources */,
 				4AC69B611FFCB01900341C83 /* ImapSessionError.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
