@@ -107,12 +107,12 @@ extension MailPart {
                 disposition = self.parse(mailimap_body_fld_dsp: bd_disposition)
             }
             
-            return .singlePart(id: partId, data: .basic(type: mediaType, disposition: disposition, fields: bodyFields, rowData: nil))
+            return .singlePart(id: partId, data: .basic(type: mediaType, disposition: disposition, fields: bodyFields, rawData: nil))
             
         case MAILIMAP_BODY_TYPE_1PART_TEXT:
             let text =  body.pointee.bd_data.bd_type_text!
             let (textType, bodyFields) = self.parse(mailimap_body_type_text: text)
-            return .singlePart(id: partId, data: .text(type: textType, fields: bodyFields, rowData: nil))
+            return .singlePart(id: partId, data: .text(type: textType, fields: bodyFields, rawData: nil))
         case MAILIMAP_BODY_TYPE_1PART_MSG:
             let msg = body.pointee.bd_data.bd_type_msg!
             return self.parse(mailimap_body_type_msg: msg, partId: partId)

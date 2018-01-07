@@ -10,6 +10,9 @@
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <customFonts key="customFonts">
+        <array key="Helvetica.ttc">
+            <string>Helvetica-Bold</string>
+        </array>
         <array key="HiraginoMaruGothProN.ttc">
             <string>HiraMaruProN-W4</string>
         </array>
@@ -116,11 +119,69 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <prototypes>
-                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" id="gD3-Qm-rol">
-                                <rect key="frame" x="0.0" y="28" width="375" height="44"/>
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="MessageDetailSubjectCell" rowHeight="70" id="gD3-Qm-rol" customClass="MessageDetailSubjectCell" customModule="PelicanDemo_iOS" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="28" width="375" height="70"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="gD3-Qm-rol" id="lSo-T6-oHd">
+                                    <rect key="frame" x="0.0" y="0.0" width="375" height="69.5"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                    <subviews>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Subject" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="XvI-vP-K8y">
+                                            <rect key="frame" x="10" y="10" width="74.5" height="20"/>
+                                            <fontDescription key="fontDescription" name="HiraMaruProN-W4" family="Hiragino Maru Gothic ProN" pointSize="20"/>
+                                            <nil key="textColor"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
+                                        <view contentMode="scaleToFill" horizontalCompressionResistancePriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="l1q-G1-ovI">
+                                            <rect key="frame" x="315" y="10" width="50" height="50"/>
+                                            <color key="backgroundColor" name="keyboardFocusIndicatorColor" catalog="System" colorSpace="catalog"/>
+                                            <constraints>
+                                                <constraint firstAttribute="width" constant="50" id="9h8-VT-cAj"/>
+                                                <constraint firstAttribute="height" constant="50" id="VIt-kP-4gA"/>
+                                            </constraints>
+                                        </view>
+                                    </subviews>
+                                    <constraints>
+                                        <constraint firstItem="XvI-vP-K8y" firstAttribute="leading" secondItem="lSo-T6-oHd" secondAttribute="leading" constant="10" id="0i4-j0-zMD"/>
+                                        <constraint firstAttribute="bottom" relation="greaterThanOrEqual" secondItem="XvI-vP-K8y" secondAttribute="bottom" constant="10" id="HDo-O3-kgr"/>
+                                        <constraint firstItem="l1q-G1-ovI" firstAttribute="centerY" secondItem="lSo-T6-oHd" secondAttribute="centerY" id="I7m-pU-fVK"/>
+                                        <constraint firstItem="l1q-G1-ovI" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="XvI-vP-K8y" secondAttribute="trailing" constant="10" id="XUI-T4-rDK"/>
+                                        <constraint firstAttribute="trailing" secondItem="l1q-G1-ovI" secondAttribute="trailing" constant="10" id="qvE-U8-Fcz"/>
+                                        <constraint firstItem="XvI-vP-K8y" firstAttribute="top" secondItem="lSo-T6-oHd" secondAttribute="top" constant="10" id="x8b-ls-YL3"/>
+                                    </constraints>
+                                </tableViewCellContentView>
+                                <connections>
+                                    <outlet property="ibSubjectLabel" destination="XvI-vP-K8y" id="9UW-rj-5r8"/>
+                                </connections>
+                            </tableViewCell>
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="MessageDetailFromCell" id="20S-Nd-BXX" customClass="MessageDetailFromCell" customModule="PelicanDemo_iOS" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="98" width="375" height="44"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="20S-Nd-BXX" id="1D5-uX-7SI">
                                     <rect key="frame" x="0.0" y="0.0" width="375" height="43.5"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                    <subviews>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="From" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="61V-a2-7ke">
+                                            <rect key="frame" x="10" y="10" width="42.5" height="20"/>
+                                            <fontDescription key="fontDescription" name="Helvetica-Bold" family="Helvetica" pointSize="17"/>
+                                            <nil key="textColor"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
+                                    </subviews>
+                                    <constraints>
+                                        <constraint firstItem="61V-a2-7ke" firstAttribute="top" secondItem="1D5-uX-7SI" secondAttribute="top" constant="10" id="6vO-5w-sOB"/>
+                                        <constraint firstItem="61V-a2-7ke" firstAttribute="leading" secondItem="1D5-uX-7SI" secondAttribute="leading" constant="10" id="G5K-mf-e2G"/>
+                                    </constraints>
+                                </tableViewCellContentView>
+                                <connections>
+                                    <outlet property="ibFromLabel" destination="61V-a2-7ke" id="ph9-VB-Be9"/>
+                                </connections>
+                            </tableViewCell>
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="MessageDetailBodyCell" rowHeight="463" id="kSh-Ge-29Z" customClass="MessageDetailBodyCell" customModule="PelicanDemo_iOS" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="142" width="375" height="463"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="kSh-Ge-29Z" id="sA0-6F-1eM">
+                                    <rect key="frame" x="0.0" y="0.0" width="375" height="462.5"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                 </tableViewCellContentView>
                             </tableViewCell>
@@ -133,7 +194,7 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="SnY-N4-7Xr" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2137" y="-197"/>
+            <point key="canvasLocation" x="2136.8000000000002" y="-197.45127436281859"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="MZB-SN-JRn">

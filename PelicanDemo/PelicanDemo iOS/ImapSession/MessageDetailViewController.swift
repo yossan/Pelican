@@ -7,46 +7,34 @@
 
 import UIKit
 import Pelican
-
-extension MailPart {
-    func findText(prefer type: TextType) -> MailPart? {
-        
-        if case let .multiPart(_, type, parts, _) = self, type == .alternative {
-            // select prefer type
-            
-        } else if case let .singlePart(_, data) = self,
-            case let .text (_, _, _) = data {
-            // plain or html
-            return self
-        }
-        return nil
-    }
-}
+import WebKit
 
 class MessageDetailViewController: UITableViewController {
 
-    var message: Message! = nil
-    var messageBody: MessageBody? = nil
+    // MARK: - Instance properties
+    
+    var message: Message!
+    var textPart: MailPart!
+    var attachments: [MailPart] = []
+    
+    var webView: WKWebView!
     
     var sessionController: ImapSessionViewController {
         return self.parent?.parent as! ImapSessionViewController
     }
     
-    func downloadPart(_ root: MailPart) {
-        switch root {
-        case let .multiPart(id, type, parts, _):
-            switch type {
-            case .related:
-                parts.forEach({ (subPart) in
-                    self.downloadPart(subPart)
-                })
-            case .alternative:
-                let textPart = root.findText(prefer: .html)
-                
-            }
-        case let .singlePart(id, data): break
-        }
+    // MARK: - Instance Life Methods
+    
+    deinit {
+//        self.removeWebviewDidChangeSizeObserve()
     }
+    
+    override func didReceiveMemoryWarning() {
+        super.didReceiveMemoryWarning()
+        // Dispose of any resources that can be recreated.
+    }
+    
+    // MARK: - View Life Cycle
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -56,76 +44,156 @@ class MessageDetailViewController: UITableViewController {
 
         // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
         // self.navigationItem.rightBarButtonItem = self.editButtonItem
+        guard let body = self.message.body else { return }
         
-        self.sessionController.command({ (imap) in
-            
-            let messageBody = try self.makeMessageBody()
-            
-            let textPart = {
-                if let htmlPart = messageBody.findText(.html) {
-                    return htmlPart
-                } else {
-                    return messageBody.texts[0]
-                }
-            }() as TextData
-            
-            try imap.fetchData(uid: UInt32(self.message.uid), partId: textPart.partId, completion: { (data) in
-                
-            })
-            
-        }) { (error) in
-            switch error {
-            case is MessageDetailError: break
-            case is ImapSessionError:
-                self.sessionController.handleImapError(error as? ImapSessionError)
-            default: break
+        self.webView = self.makeWebView()
+        self.textPart = body.textPart(prefer: .html)
+        print("textPart", self.textPart)
+        print("body.hasData", body.hasData)
+        if body.hasData {
+            self.loadText(self.textPart)
+        } else {
+            self.downloadData(with: body) { (error) in
+                self.loadText(self.textPart)
             }
         }
     }
     
-    func makeMessageBody() throws -> MessageBody {
-        guard let part =  self.message.body,
-            let messageBody = MessageBody(root: part) else {
-                throw MessageDetailError.notSupported
-        }
-        return messageBody
+    func makeWebView() -> WKWebView {
+        let webView = WKWebView(frame: CGRect.zero)
+        webView.autoresizingMask = [.flexibleTopMargin, .flexibleWidth, .flexibleHeight, .flexibleLeftMargin, .flexibleRightMargin, .flexibleBottomMargin]
+        
+        return webView
     }
     
-    enum MessageDetailError: Error {
-        case notSupported
-    }
-
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
+    // MARK: - WKWebView related methods
+    
+    func registerWebviewDidChangeSizeObserve() {
+        webView.addObserver(self, forKeyPath: #keyPath(WKWebView.scrollView.contentSize), options: .new, context: nil)
     }
     
-    func fetchContents() {
+    func removeWebviewDidChangeSizeObserve() {
+        self.removeObserver(self.webView, forKeyPath: #keyPath(WKWebView.scrollView.contentSize))
+    }
+    
+    override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
         
     }
+    
+    // MARK - Private methods
+    
+    private func loadText(_ text: MailPart) {
+//        self.webView.loadData()
+        let html = String(data: text.data!, encoding: .utf8)!
+        self.webView.loadHTMLString(html, baseURL: nil)
+        self.tableView.reloadSections(IndexSet(integer: 2), with: .none)
+    }
+    
+    private func downloadData(with body: MailPart, completion: @escaping (Error?)->()) {
+        let uid = self.message.uid
+    
+        self.sessionController.command({ (imap) in
+            for part in body.singleParts ({ $0.isText == true || $0.isInline == true }) {
+                guard part.hasData == false else {
+                    continue
+                }
+                try imap.fetchData(uid: uid, partId: part.id, completion: { (data) in
+                    let str = String(data: data, encoding: .utf8)!
+                    print(str)
+                    self.message.body![part.id]?.data = data
+                    if part.id == self.textPart.id {
+                        self.textPart = self.message.body![part.id]
+                    }
+                    
+                }).check()
+            }
+            
+            OperationQueue.main.addOperation {
+                completion(nil)
+            }
+        }) { (error) in
+            OperationQueue.main.addOperation {
+                completion(error)
+            }
+        }
+    }
+    
 
     // MARK: - Table view data source
+    enum Section: Int {
+        case subject
+        case from
+        case body
+        
+        static var count: Int = 3
+        init(_ section: Int) {
+            switch section {
+            case 0:
+                self = .subject
+            case 1:
+                self = .from
+            case 2:
+                self = .body
+            default:
+                fatalError()
+            }
+        }
+    }
 
     override func numberOfSections(in tableView: UITableView) -> Int {
         // #warning Incomplete implementation, return the number of sections
-        return 0
+        return Section.count
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         // #warning Incomplete implementation, return the number of rows
-        return 0
+        return 1
+    }
+    
+    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        switch Section(indexPath.section) {
+        case .subject:
+            return MessageDetailSubjectCell.cellHeight(withSubject: self.message.header!.subject, maxWidth: self.view.bounds.width)
+        case .from:
+            return MessageDetailFromCell.cellHeight()
+        case .body:
+            let minimumHeight = self.view.bounds.size.height - MessageDetailSubjectCell.cellHeight(withSubject: self.message.header!.subject, maxWidth: self.view.bounds.width) - MessageDetailFromCell.cellHeight()
+            
+            if self.textPart.hasData == true && self.webView.scrollView.contentSize.height >= minimumHeight {
+                return self.webView.scrollView.contentSize.height
+            } else {
+                return minimumHeight
+            }
+        }
     }
 
-    /*
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "reuseIdentifier", for: indexPath)
-
-        // Configure the cell...
-
-        return cell
+        switch Section(indexPath.section) {
+        case .subject:
+            let cell = tableView.dequeueReusableCell(withIdentifier: "MessageDetailSubjectCell", for: indexPath) as! MessageDetailSubjectCell
+            cell.ibSubjectLabel.text = self.message.header?.subject
+            return cell
+            
+        case .from:
+            let cell = tableView.dequeueReusableCell(withIdentifier: "MessageDetailFromCell", for: indexPath) as! MessageDetailFromCell
+            cell.ibFromLabel.text = self.message.header?.from.first?.preferedDisplayName
+            return cell
+        case .body:
+            let cell = tableView.dequeueReusableCell(withIdentifier: "MessageDetailBodyCell", for: indexPath) as! MessageDetailBodyCell
+            
+            if cell.subviews.contains(self.webView) == false {
+                self.webView.frame = cell.bounds
+                cell.addSubview(self.webView)
+                
+                // handles changing webView size.
+                self.registerWebviewDidChangeSizeObserve()
+            }
+            return cell
+        }
     }
-    */
+ 
 
+    
     /*
     // Override to support conditional editing of the table view.
     override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {

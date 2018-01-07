@@ -174,10 +174,10 @@ public class ImapSession {
                         return
                     }
                     mailimap_msg_att_body_section.pointee.parse(handler: { (bodySection) in
-                        guard case let .part (_, message, _) = bodySection else {
+                        guard case let .part (_, message, length) = bodySection else {
                             return
                         }
-                        let data = Data(buffer: UnsafeBufferPointer(start: message, count: 1))
+                        let data = Data(buffer: UnsafeBufferPointer(start: message, count: length))
                         completion(data)
                     })
                 })

@@ -27,7 +27,7 @@ extension UnsafeMutablePointer where Pointee == mailimap {
         
         var fetchResult: UnsafeMutablePointer<clist>? = clist_new()
         let r = mailimap_fetch(self, set, fetchType, &fetchResult)
-        defer { mailimap_fetch_list_free(fetchResult) }
+        defer { mailimap_fetch_list_free(fetchResult) } // rで成功したかどうかで・・
         return ImapSessionError(r)
     }
 }

@@ -30,10 +30,22 @@ public enum MultipartType {
     case notSupported
 }
 
-public enum ContentData {
-    case basic (type: MediaType, disposition: Disposition, fields: BodyFields, rowData: Data?)
-    case text (type: TextType, fields: BodyFields, rowData: Data?)
+public enum ContentData: CustomStringConvertible {
+    case basic (type: MediaType, disposition: Disposition, fields: BodyFields, rawData: Data?)
+    case text (type: TextType, fields: BodyFields, rawData: Data?)
     case message (header: MessageHeader, fields: BodyFields, body: MailPart)
+    
+    public var description: String {
+        switch self {
+        case let .basic(type, disposition, fields, rawData):
+            return ".basic(\(type), \(disposition), \(fields), \(rawData?.count ?? 0))"
+        case let .text(type, fields, rawData):
+            return ".text(\(type), \(fields), \(rawData?.count ?? 0))"
+        case let .message(header, fields, body):
+            return ".message(\(header), \(fields), \(body))"
+        }
+    }
+    
 }
 
 public struct BodyFields: CustomStringConvertible {

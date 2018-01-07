@@ -7,8 +7,8 @@
 
 import Foundation
 
-extension String {
-//    init(cString: UnsafeMutablePointer<Int8>) {
-//        self = String(cString: UnsafePointer<Int8>(cString))
-//    }
+extension UnsafeMutablePointer where Pointee == Int8 {
+    var string: String {
+        return String(cString: self)
+    }
 }
