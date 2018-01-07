@@ -134,7 +134,7 @@ public class ImapSession {
             mailimap_fetch_type_new_fetch_att_list_add(fetchType, bodyStructureAtt)
         }
         
-        let r = self.imap.fetch(set: set, type: fetchType) { (messageAttribute) in
+        let r = self.imap.fetch(isUID: false, set: set, type: fetchType) { (messageAttribute) in
             guard let messageAttribute = messageAttribute,
                 let message = Message(mailimap_msg_att: messageAttribute) else {
                     return
@@ -164,7 +164,7 @@ public class ImapSession {
         let bodyPeekSection = mailimap_fetch_att_new_body_peek_section(section)
         mailimap_fetch_type_new_fetch_att_list_add(fetchType, bodyPeekSection)
 
-        let r = self.imap.fetch(set: set, type: fetchType) { (messageAttribute) in
+        let r = self.imap.fetch(isUID: true, set: set, type: fetchType) { (messageAttribute) in
             messageAttribute?.pointee.parse(handler: { (attribute) in
                 guard case let .`static`(mailimap_msg_att_static) = attribute else {
                     return

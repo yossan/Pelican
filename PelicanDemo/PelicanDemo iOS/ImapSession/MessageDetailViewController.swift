@@ -48,12 +48,15 @@ class MessageDetailViewController: UITableViewController {
         
         self.webView = self.makeWebView()
         self.textPart = body.textPart(prefer: .html)
-        print("textPart", self.textPart)
-        print("body.hasData", body.hasData)
         if body.hasData {
             self.loadText(self.textPart)
         } else {
             self.downloadData(with: body) { (error) in
+                guard error == nil else {
+                    print("download failure: \(error!)")
+                    return
+                }
+                
                 self.loadText(self.textPart)
             }
         }
@@ -83,8 +86,9 @@ class MessageDetailViewController: UITableViewController {
     // MARK - Private methods
     
     private func loadText(_ text: MailPart) {
+        guard let data = text.data else { return }
 //        self.webView.loadData()
-        let html = String(data: text.data!, encoding: .utf8)!
+        let html = String(data: data, encoding: .utf8)!
         self.webView.loadHTMLString(html, baseURL: nil)
         self.tableView.reloadSections(IndexSet(integer: 2), with: .none)
     }
@@ -93,28 +97,28 @@ class MessageDetailViewController: UITableViewController {
         let uid = self.message.uid
     
         self.sessionController.command({ (imap) in
-            for part in body.singleParts ({ $0.isText == true || $0.isInline == true }) {
+            for part in body.singleParts ({ ($0.isText == true && $0.id == self.textPart.id) || $0.isInline == true }) {
                 guard part.hasData == false else {
                     continue
                 }
-                try imap.fetchData(uid: uid, partId: part.id, completion: { (data) in
-                    let str = String(data: data, encoding: .utf8)!
-                    print(str)
+            
+                _ = imap.fetchData(uid: uid, partId: part.id, completion: { (data) in
+                
                     self.message.body![part.id]?.data = data
                     if part.id == self.textPart.id {
                         self.textPart = self.message.body![part.id]
                     }
                     
-                }).check()
+                })
             }
             
             OperationQueue.main.addOperation {
                 completion(nil)
             }
-        }) { (error) in
-            OperationQueue.main.addOperation {
-                completion(error)
-            }
+        }) { (_) in
+//            OperationQueue.main.addOperation {
+//                completion(error)
+//            }
         }
     }
     

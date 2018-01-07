@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import libetpan
 
 extension MailPart {
     
@@ -49,6 +50,51 @@ extension MailPart {
                 return false
             }
         }
+    }
+    
+    public var decodedText: String? {
+        if case let .singlePart(_, contentData) = self,
+            case let .text(_, fields, rawData) = contentData,
+            case let .some(data) = rawData {
+            switch fields.encoding {
+            case .base64:
+                /*
+                 mailmime_base64_body_parse(const char * message, size_t length,
+                 size_t * indx, char ** result,
+                 size_t * result_len);
+                 */
+               
+                return data.withUnsafeBytes { (bytes: UnsafePointer<Int8>)->(String?)  in
+                    let length = Int(fields.size)
+                    var index = 0
+                    var result: UnsafeMutablePointer<Int8>? = nil
+                    var resultLength = 0
+                    
+                    let r = mailmime_base64_body_parse(bytes, length, &index, &result, &resultLength)
+                    if r == MAILMH_NO_ERROR {
+                        defer { free(result) }
+                    }
+                    if let result = result {
+                        return String(cString: result, encoding: .utf8)
+                    }
+                    return nil
+                }
+                
+            case .quoted: break
+                /*
+                 int mailmime_quoted_printable_body_parse(const char * message, size_t length,
+                 size_t * indx, char ** result,
+                 size_t * result_len, int in_header);
+
+                 */
+            case .sevenBit: fallthrough
+            case .eightBit: fallthrough
+            case .binary:   fallthrough
+            case .other:
+                return nil
+            }
+        }
+        return nil
     }
     
     public func textPart(prefer preferedType: TextType) -> MailPart {

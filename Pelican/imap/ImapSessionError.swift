@@ -64,15 +64,22 @@ public enum ImapSessionError: Int, Error {
         }
     }
     
-    public func check() throws {
+    public var isSuccess: Bool {
         switch self {
         case .NO_ERROR,
              .NO_ERROR_AUTHENTICATED,
              .NO_ERROR_NON_AUTHENTICATED:
-            break   
+            return true
         default:
-            throw self
+            return false
         }
+    }
+    
+    public func check() throws {
+        guard self.isSuccess == false else {
+            return
+        }
+        throw self
     }
 }
 
@@ -127,5 +134,11 @@ extension ImapSessionError: CustomStringConvertible {
         case .CUSTOM_COMMAND: return "CUSTOM_COMMAND"
         default: return "Unknown"
         }
+    }
+}
+
+extension ImapSessionError: ExpressibleByIntegerLiteral {
+    public init(integerLiteral value: Int32) {
+        self.init(value)
     }
 }

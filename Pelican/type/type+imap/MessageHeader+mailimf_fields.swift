@@ -88,8 +88,11 @@ extension MessageHeader {
         var decodedValue: UnsafeMutablePointer<Int8>? = nil
         let r = mailmime_encoded_phrase_parse("us-ascii",
                                               encodedValue, strlen(encodedValue),
-                                              &curToken, "utf-8", &decodedValue);
-        defer { free(decodedValue) }
+                                              &curToken, "utf-8", &decodedValue)
+        if r == MAILMH_NO_ERROR {
+            defer { free(decodedValue) }
+        }
+        
         if let decodedValue = decodedValue {
             return String(cString: decodedValue)
         } else {

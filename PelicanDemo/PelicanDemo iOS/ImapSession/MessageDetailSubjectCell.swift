@@ -30,10 +30,12 @@ class MessageDetailSubjectCell: UITableViewCell {
         let text = subject as NSString
         
         let subjectLabelFont = UIFont(name: "Hiragino Maru Gothic ProN W4", size: 20)!
-        return text.boundingRect(
+        let height = text.boundingRect(
             with: CGSize(width: maxWidth, height: 0),
             options: .usesLineFragmentOrigin,
             attributes: [.font : subjectLabelFont],
             context: nil).height
+        
+        return height + 20 < 70.0 ? 70.0 : height + 20
     }
 }

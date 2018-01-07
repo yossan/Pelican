@@ -15,7 +15,7 @@ extension UnsafeMutablePointer where Pointee == mailimap {
         let handler: FetchCompletion
     }
     
-    func fetch(set: UnsafeMutablePointer<mailimap_set>?, type fetchType: UnsafeMutablePointer<mailimap_fetch_type>?, callBackHandler: @escaping FetchCompletion) -> ImapSessionError {
+    func fetch(isUID: Bool, set: UnsafeMutablePointer<mailimap_set>?, type fetchType: UnsafeMutablePointer<mailimap_fetch_type>?, callBackHandler: @escaping FetchCompletion) -> ImapSessionError {
         
         var fetchContext = FetchContext(handler: callBackHandler)
         mailimap_set_msg_att_handler(self, { (mailimap_msg_att, rawContext) in
@@ -25,9 +25,18 @@ extension UnsafeMutablePointer where Pointee == mailimap {
         
         defer { mailimap_set_msg_att_handler(self, nil, nil) }
         
-        var fetchResult: UnsafeMutablePointer<clist>? = clist_new()
-        let r = mailimap_fetch(self, set, fetchType, &fetchResult)
-        defer { mailimap_fetch_list_free(fetchResult) } // rで成功したかどうかで・・
-        return ImapSessionError(r)
+        var fetchResult: UnsafeMutablePointer<clist>? = nil
+        
+        let r: ImapSessionError
+        if isUID {
+            r = ImapSessionError(mailimap_uid_fetch(self, set, fetchType, &fetchResult))
+        } else {
+            r = ImapSessionError(mailimap_fetch(self, set, fetchType, &fetchResult))
+        }
+    
+        if r.isSuccess {
+            defer { mailimap_fetch_list_free(fetchResult) }
+        }
+        return r
     }
 }
