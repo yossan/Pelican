@@ -63,34 +63,68 @@ class MessageDetailViewController: UITableViewController {
     }
     
     func makeWebView() -> WKWebView {
-        let webView = WKWebView(frame: CGRect.zero)
+        let jscript = "var meta = document.createElement('meta'); meta.setAttribute('name', 'viewport'); meta.setAttribute('content', 'width=device-width'); document.getElementsByTagName('head')[0].appendChild(meta);"
+        let userScript = WKUserScript(source: jscript, injectionTime: .atDocumentEnd, forMainFrameOnly: true)
+        let wkUController = WKUserContentController()
+        wkUController.addUserScript(userScript)
+        let wkWebConfig = WKWebViewConfiguration()
+        wkWebConfig.userContentController = wkUController
+        
+        let webView = WKWebView(frame: CGRect.zero, configuration: wkWebConfig)
         webView.autoresizingMask = [.flexibleTopMargin, .flexibleWidth, .flexibleHeight, .flexibleLeftMargin, .flexibleRightMargin, .flexibleBottomMargin]
         
+        webView.scrollView.maximumZoomScale = 1.5
         return webView
     }
     
     // MARK: - WKWebView related methods
     
     func registerWebviewDidChangeSizeObserve() {
-        webView.addObserver(self, forKeyPath: #keyPath(WKWebView.scrollView.contentSize), options: .new, context: nil)
+        webView.addObserver(self, forKeyPath: #keyPath(WKWebView.isLoading), options: .new, context: nil)
+        webView.scrollView.delegate = self
     }
     
     func removeWebviewDidChangeSizeObserve() {
-        self.removeObserver(self.webView, forKeyPath: #keyPath(WKWebView.scrollView.contentSize))
+        self.removeObserver(self.webView, forKeyPath: #keyPath(WKWebView.isLoading))
     }
     
     override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
-        
+        if object is WKWebView {
+            print("change", change!)
+//            print("web.isLoading", self.webView.isLoading)
+//            print("wk.size = \(self.webView.scrollView.contentSize)")
+            guard let newValue = change?[.newKey] else { return }
+            guard let isLoading = newValue as? Bool else { return }
+            guard isLoading == false else { return }
+            webView.evaluateJavaScript("document.body.scrollHeight", completionHandler: { [weak self] (value, error) in
+                if let value = value as? CGFloat {
+                    print("value", value)
+                    self?.reloadBodyCell(height: value)
+                }
+            })
+            
+        }
+    }
+    
+    override func scrollViewDidZoom(_ scrollView: UIScrollView) {
+        if scrollView == self.webView.scrollView {
+            self.reloadBodyCell(height: self.bodyCellHeight)
+        }
+    }
+    
+    var bodyCellHeight: CGFloat = 0.0
+    private func reloadBodyCell(height: CGFloat) {
+        self.bodyCellHeight = height
+        self.tableView.reloadSections(IndexSet(integer: 2), with: .none)
     }
     
     // MARK - Private methods
     
     private func loadText(_ text: MailPart) {
-        guard let data = text.data else { return }
-//        self.webView.loadData()
-        let html = String(data: data, encoding: .utf8)!
+        guard let html = text.decodedText else { return }
         self.webView.loadHTMLString(html, baseURL: nil)
-        self.tableView.reloadSections(IndexSet(integer: 2), with: .none)
+        self.webView.scrollView.showsVerticalScrollIndicator = false
+        
     }
     
     private func downloadData(with body: MailPart, completion: @escaping (Error?)->()) {
@@ -103,8 +137,9 @@ class MessageDetailViewController: UITableViewController {
                 }
             
                 _ = imap.fetchData(uid: uid, partId: part.id, completion: { (data) in
-                
+        
                     self.message.body![part.id]?.data = data
+                    
                     if part.id == self.textPart.id {
                         self.textPart = self.message.body![part.id]
                     }
@@ -163,8 +198,26 @@ class MessageDetailViewController: UITableViewController {
         case .body:
             let minimumHeight = self.view.bounds.size.height - MessageDetailSubjectCell.cellHeight(withSubject: self.message.header!.subject, maxWidth: self.view.bounds.width) - MessageDetailFromCell.cellHeight()
             
+            /*
             if self.textPart.hasData == true && self.webView.scrollView.contentSize.height >= minimumHeight {
                 return self.webView.scrollView.contentSize.height
+                
+                
+            } else {
+                return minimumHeight
+            }
+ */
+            if self.textPart.hasData == true {
+                // todo: 縦横比率を考慮して、+ or - の増加分heightを上げる。
+                let viewRatio = self.view.frame.size.width / self.bodyCellHeight
+                let heigh = self.bodyCellHeight * self.webView.scrollView.zoomScale * viewRatio
+                print("cellHeigh", heigh)
+                if heigh > minimumHeight {
+                    return heigh
+                } else {
+                    return minimumHeight
+                }
+                
             } else {
                 return minimumHeight
             }

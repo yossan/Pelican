@@ -90,10 +90,6 @@ public class ImapSession {
         }
     }
     
-    struct FetchContext {
-        let handler: (Message) -> ()
-    }
-    
     public func fetchLast(num: UInt32, options: FetchOptions, handler: @escaping (Message)->()) -> ImapSessionError {
         
         let messageCount: UInt32 = {
@@ -134,14 +130,13 @@ public class ImapSession {
             mailimap_fetch_type_new_fetch_att_list_add(fetchType, bodyStructureAtt)
         }
         
-        let r = self.imap.fetch(isUID: false, set: set, type: fetchType) { (messageAttribute) in
+        return self.imap.fetch(isUID: false, set: set, type: fetchType) { (messageAttribute) in
             guard let messageAttribute = messageAttribute,
                 let message = Message(mailimap_msg_att: messageAttribute) else {
                     return
             }
             completion(message)
         }
-        return r
     }
     
     public func fetchData(uid: UInt32, partId: String, completion: @escaping (Data)->()) -> ImapSessionError {

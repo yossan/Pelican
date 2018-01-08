@@ -26,6 +26,11 @@ class MessageListViewController: UITableViewController {
         // self.navigationItem.rightBarButtonItem = self.editButtonItem
         
         self.sessionController.command({ (imap) in
+//            try imap.fetch(range: 1..<10, options: [.messageHeader, .bodystructure], completion: { (message) in
+//                OperationQueue.main.addOperation {
+//                    self.appendMessage(message)
+//                }
+//            }).check()
             try imap.fetchLast(num: 20, options: [.messageHeader, .bodystructure]) { (message) in
                 OperationQueue.main.addOperation {
                     self.appendMessage(message)

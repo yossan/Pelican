@@ -55,7 +55,7 @@ public struct BodyFields: CustomStringConvertible {
     public var desc: String?
     public var name: String?
     public var charset: String? // String.Encoding にする デフォルトはUS-ASCII
-    文字コードを指示するための charset パラメータがあります。上記の例では、charset パラメータで ISO-2022-JP(日本語) であると指定されています。英語なら US-ASCII、ヨーロッパの主要言語なら ISO-8859-1 と記述します。なお、charset パラメータが省略された場合は、US-ASCII として取り扱われます。
+//    文字コードを指示するための charset パラメータがあります。上記の例では、charset パラメータで ISO-2022-JP(日本語) であると指定されています。英語なら US-ASCII、ヨーロッパの主要言語なら ISO-8859-1 と記述します。なお、charset パラメータが省略された場合は、US-ASCII として取り扱われます。
     
     init(size: UInt32, encoding: TransferEncoding) {
         self.size = size

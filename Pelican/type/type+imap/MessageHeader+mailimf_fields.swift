@@ -85,15 +85,15 @@ extension MessageHeader {
     
     private func decodeMIMEHeader(from encodedValue: UnsafeMutablePointer<Int8>) -> String {
         var curToken = 0;
-        var decodedValue: UnsafeMutablePointer<Int8>? = nil
+        var decodedValueBox: UnsafeMutablePointer<Int8>? = nil
         let r = mailmime_encoded_phrase_parse("us-ascii",
                                               encodedValue, strlen(encodedValue),
-                                              &curToken, "utf-8", &decodedValue)
-        if r == MAILMH_NO_ERROR {
-            defer { free(decodedValue) }
-        }
-        
-        if let decodedValue = decodedValue {
+                                              &curToken, "utf-8", &decodedValueBox).toMIMEError()
+        if r.isSuccess {
+            defer { free(decodedValueBox) }
+            guard let decodedValue = decodedValueBox else {
+                return String(cString: encodedValue)
+            }
             return String(cString: decodedValue)
         } else {
             return String(cString: encodedValue)

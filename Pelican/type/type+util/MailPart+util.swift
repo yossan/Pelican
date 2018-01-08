@@ -70,31 +70,86 @@ extension MailPart {
                     var result: UnsafeMutablePointer<Int8>? = nil
                     var resultLength = 0
                     
-                    let r = mailmime_base64_body_parse(bytes, length, &index, &result, &resultLength)
-                    if r == MAILMH_NO_ERROR {
+                    let r = mailmime_base64_body_parse(bytes, length, &index, &result, &resultLength).toMIMEError()
+                    
+                    if r.isSuccess {
                         defer { free(result) }
+                        if let result = result {
+                            return String(cString: result, encoding: self.stringEncoding(from: fields.charset))
+                        }
                     }
-                    if let result = result {
-                        return String(cString: result, encoding: .utf8)
-                    }
+                    
                     return nil
                 }
                 
-            case .quoted: break
+            case .quoted:
                 /*
                  int mailmime_quoted_printable_body_parse(const char * message, size_t length,
                  size_t * indx, char ** result,
                  size_t * result_len, int in_header);
-
                  */
+            return data.withUnsafeBytes { (bytes: UnsafePointer<Int8>)->(String?)  in
+                let length = Int(fields.size)
+                var index = 0
+                var result: UnsafeMutablePointer<Int8>? = nil
+                var resultLength = 0
+                
+                let r = mailmime_quoted_printable_body_parse(bytes, length, &index, &result, &resultLength, 0).toMIMEError()
+                
+                if r.isSuccess {
+                    defer { free(result) }
+                    if let result = result {
+                        return String(cString: result, encoding: self.stringEncoding(from: fields.charset))
+                    }
+                }
+                
+                return nil
+                }
+                
             case .sevenBit: fallthrough
             case .eightBit: fallthrough
             case .binary:   fallthrough
             case .other:
-                return nil
+                return String(data: data, encoding: self.stringEncoding(from: fields.charset))
             }
         }
         return nil
+    }
+    
+    private func stringEncoding(from charset: String?) -> String.Encoding {
+        guard let charset = charset else {
+            return .ascii
+        }
+        switch charset.lowercased() {
+        case "utf-8": return .utf8
+        case "utf-16": return .utf16
+        case "utf-16be": return .utf16BigEndian
+        case "utf-16le": return .utf16LittleEndian
+        case "utf-32": return .utf32
+        case "utf-32be": return .utf32BigEndian
+        case "utf-32le": return .utf32LittleEndian
+        case "iso-2022-jp": return .iso2022JP
+        case "euc-jp": return .japaneseEUC
+        case "shift_jis": return .shiftJIS
+        case "‎windows-1250": return .windowsCP1250
+        case "‎windows-1251": return .windowsCP1251
+        case "‎windows-1252": return .windowsCP1252
+        case "‎windows-1253": return .windowsCP1253
+        case "‎windows-1254": return .windowsCP1254
+        case "big5":
+            let cfEnc = CFStringEncodings.big5
+            let nsEnc = CFStringConvertEncodingToNSStringEncoding(CFStringEncoding(cfEnc.rawValue))
+            
+            return String.Encoding(rawValue: nsEnc)
+        case "GB18030":
+            let cfEnc = CFStringEncodings.GB_18030_2000
+            let nsEnc = CFStringConvertEncodingToNSStringEncoding(CFStringEncoding(cfEnc.rawValue))
+            
+            return String.Encoding(rawValue: nsEnc)
+            
+        default:
+            return .ascii
+        }
     }
     
     public func textPart(prefer preferedType: TextType) -> MailPart {
@@ -142,33 +197,29 @@ extension MailPart {
     
     public subscript(_ partId: String) -> MailPart? {
         get {
-            switch self {
-            case let .multiPart(id, _, parts, _):
-                if id == partId {
-                    return self
-                } else {
-                    return parts.first(where: { (subPart) -> Bool in
-                        return subPart[partId] != nil
-                    })
+            var hit: MailPart? = nil
+            self.forEach { (part) in
+                if part.id == partId {
+                    hit = part
                 }
-            case let .singlePart(id, _):
-                if id == partId {
-                    return self
-                }
-                return nil
             }
+            return hit
         }
         mutating set {
             guard let newValue = newValue else { return }
             switch self {
-            case let .multiPart(id, _, parts, _):
+            case let .multiPart(id, type, parts, boundary):
                 if id == partId {
                     self = newValue
                 } else {
-                    var p = parts.first(where: { (subPart) -> Bool in
-                        subPart[partId] != nil
-                    })
-                    p?[partId] = newValue
+                    var newParts: [MailPart] = []
+                    for subPart in parts {
+                        var newSubPart = subPart
+                        newSubPart[partId] = newValue
+                        newParts.append(newSubPart)
+                    }
+ 
+                    self = .multiPart(id: id, type: type, parts: newParts, boundary: boundary)
                 }
             case let .singlePart(id, _):
                 guard id == partId else {

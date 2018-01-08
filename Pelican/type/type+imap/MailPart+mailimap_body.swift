@@ -233,6 +233,7 @@ extension MailPart {
         if let body_param = bd_fields.pointee.bd_parameter {
             let params = self.parse(mailimap_body_fld_param: body_param)
             bodyFields.charset = params["CHARSET"]
+            print("charset", String(describing: params["CHARSET"]))
             bodyFields.name    = params["NAME"]
         }
         

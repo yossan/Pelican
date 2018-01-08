@@ -18,7 +18,6 @@
 		4AA1DE5B1FFDCCCC00AC9FC7 /* Pelican.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4AA1DE581FFDCCB100AC9FC7 /* Pelican.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		4AA1DE5C1FFDCCCC00AC9FC7 /* Result.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4AA1DE591FFDCCB100AC9FC7 /* Result.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		4AA1DE5E1FFE101E00AC9FC7 /* MessageDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AA1DE5D1FFE101E00AC9FC7 /* MessageDetailViewController.swift */; };
-		4AA1DE621FFF2C5500AC9FC7 /* MessageBody.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AA1DE611FFF2C5500AC9FC7 /* MessageBody.swift */; };
 		4AC69B6A1FFCD08900341C83 /* MessageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AC69B681FFCD08900341C83 /* MessageCell.swift */; };
 		4AD0338E1FEE38CA00084911 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AD0338D1FEE38CA00084911 /* AppDelegate.swift */; };
 		4AD033931FEE38CA00084911 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4AD033911FEE38CA00084911 /* Main.storyboard */; };
@@ -69,7 +68,6 @@
 		4AA1DE581FFDCCB100AC9FC7 /* Pelican.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Pelican.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		4AA1DE591FFDCCB100AC9FC7 /* Result.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Result.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		4AA1DE5D1FFE101E00AC9FC7 /* MessageDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageDetailViewController.swift; sourceTree = "<group>"; };
-		4AA1DE611FFF2C5500AC9FC7 /* MessageBody.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageBody.swift; sourceTree = "<group>"; };
 		4AC69B681FFCD08900341C83 /* MessageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageCell.swift; sourceTree = "<group>"; };
 		4AD0338A1FEE38CA00084911 /* PelicanDemo iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "PelicanDemo iOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		4AD0338D1FEE38CA00084911 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -197,7 +195,6 @@
 				4A49B4642001CBBC004941CC /* MessageDetailSubjectCell.swift */,
 				4A49B4662001CBCD004941CC /* MessageDetailFromCell.swift */,
 				4A49B4682001CBE1004941CC /* MessageDetailBodyCell.swift */,
-				4AA1DE611FFF2C5500AC9FC7 /* MessageBody.swift */,
 			);
 			path = ImapSession;
 			sourceTree = "<group>";
@@ -305,7 +302,6 @@
 				4AD31D381FF92BC6009A2CDB /* AppConfiguration.swift in Sources */,
 				4AA1DE5E1FFE101E00AC9FC7 /* MessageDetailViewController.swift in Sources */,
 				4AD31D341FF9295C009A2CDB /* GmailConfiguration.swift in Sources */,
-				4AA1DE621FFF2C5500AC9FC7 /* MessageBody.swift in Sources */,
 				4A49B4672001CBCD004941CC /* MessageDetailFromCell.swift in Sources */,
 				4AD31D311FF909B7009A2CDB /* Token+.swift in Sources */,
 				4A49B4692001CBE1004941CC /* MessageDetailBodyCell.swift in Sources */,
