@@ -9,18 +9,33 @@ import UIKit
 import Pelican
 import WebKit
 
-class MessageDetailViewController: UITableViewController {
+class MessageDetailViewController: UIViewController, UIScrollViewDelegate {
 
-    // MARK: - Instance properties
-    
-    var message: Message!
-    var textPart: MailPart!
-    var attachments: [MailPart] = []
+    // MARK: - IBOutlet related properties
+//    @IBOutlet var headerViewController: MessageDetailHeaderViewController!
+    @IBOutlet var webContentView: UIView!
     
     var webView: WKWebView!
     
+    // MARK: - Instance properties
+
+    var message: Message!
+    
     var sessionController: ImapSessionViewController {
         return self.parent?.parent as! ImapSessionViewController
+    }
+    
+    var textPart: MailPart {
+        return self.message.body!.textPart(prefer: .html)
+    }
+    
+    var parts: [MailPart] {
+        return self.message.body!.singleParts ({ ($0.isText == true && $0.id == textPart.id) || ($0.isInline == true || $0.fileName != nil) })
+    }
+    
+    var directoryFile: File {
+        let directory = Paths.messages.add(file: "INBOX").add(file: "\(self.message.uid)")
+        return directory
     }
     
     // MARK: - Instance Life Methods
@@ -38,27 +53,100 @@ class MessageDetailViewController: UITableViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        // Uncomment the following line to preserve selection between presentations
-        // self.clearsSelectionOnViewWillAppear = false
-
-        // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-        // self.navigationItem.rightBarButtonItem = self.editButtonItem
-        guard let body = self.message.body else { return }
+        guard self.checkBodyValidation() else { return }
         
         self.webView = self.makeWebView()
-        self.textPart = body.textPart(prefer: .html)
-        if body.hasData {
-            self.loadText(self.textPart)
+        self.webContentView.addSubview(self.webView)
+        self.loadBody()
+    }
+    
+    func checkBodyValidation() -> Bool {
+        if self.message.body != nil &&
+            self.parts.contains(where: { $0.isText }) {
+            return true
+        }
+        return false
+    }
+    
+    func loadBody() {
+        if self.hasDownloadedFiles() {
+            self.makeWebViewLoad()
         } else {
-            self.downloadData(with: body) { (error) in
+            self.downloadParts() { (error) in
                 guard error == nil else {
                     print("download failure: \(error!)")
                     return
                 }
-                
-                self.loadText(self.textPart)
+                self.makeWebViewLoad()
             }
+        }
+    }
+    
+    func hasDownloadedFiles() -> Bool {
+        var result = true
+        for subPart in parts {
+            guard self.hasDownloadedFile(subPart.fileName!) == false else {
+                continue
+            }
+            result = false
+            break
+        }
+        return result
+    }
+    
+    func hasDownloadedFile(_ name: String) -> Bool {
+        let file = self.directoryFile.add(file: name)
+        return file.isExist
+    }
+    
+    func fileURL(by name: String) -> URL {
+        let file = self.directoryFile.add(file: name)
+        return file.url
+    }
+    
+    func makeWebViewLoad() {
+        let bodyFields = self.textPart.bodyFields!
+        let encoding = self.stringEncoding(from: bodyFields.charset)
+        let textURL = self.fileURL(by: self.textPart.fileName!)
+        if let data = try? Data(contentsOf: textURL),
+            let html = String(data: data, encoding: encoding) {
+            self.webView.loadHTMLString(html, baseURL: textURL)
+        }
+    }
+    
+    private func stringEncoding(from charset: String?) -> String.Encoding {
+        guard let charset = charset else {
+            return .ascii
+        }
+        switch charset.lowercased() {
+        case "utf-8": return .utf8
+        case "utf-16": return .utf16
+        case "utf-16be": return .utf16BigEndian
+        case "utf-16le": return .utf16LittleEndian
+        case "utf-32": return .utf32
+        case "utf-32be": return .utf32BigEndian
+        case "utf-32le": return .utf32LittleEndian
+        case "iso-2022-jp": return .iso2022JP
+        case "euc-jp": return .japaneseEUC
+        case "shift_jis": return .shiftJIS
+        case "‎windows-1250": return .windowsCP1250
+        case "‎windows-1251": return .windowsCP1251
+        case "‎windows-1252": return .windowsCP1252
+        case "‎windows-1253": return .windowsCP1253
+        case "‎windows-1254": return .windowsCP1254
+        case "big5":
+            let cfEnc = CFStringEncodings.big5
+            let nsEnc = CFStringConvertEncodingToNSStringEncoding(CFStringEncoding(cfEnc.rawValue))
+            
+            return String.Encoding(rawValue: nsEnc)
+        case "GB18030":
+            let cfEnc = CFStringEncodings.GB_18030_2000
+            let nsEnc = CFStringConvertEncodingToNSStringEncoding(CFStringEncoding(cfEnc.rawValue))
+            
+            return String.Encoding(rawValue: nsEnc)
+            
+        default:
+            return .ascii
         }
     }
     
@@ -70,186 +158,60 @@ class MessageDetailViewController: UITableViewController {
         let wkWebConfig = WKWebViewConfiguration()
         wkWebConfig.userContentController = wkUController
         
-        let webView = WKWebView(frame: CGRect.zero, configuration: wkWebConfig)
+        let webView = WKWebView(frame: self.webContentView.bounds, configuration: wkWebConfig)
         webView.autoresizingMask = [.flexibleTopMargin, .flexibleWidth, .flexibleHeight, .flexibleLeftMargin, .flexibleRightMargin, .flexibleBottomMargin]
-        
-        webView.scrollView.maximumZoomScale = 1.5
         return webView
     }
     
-    // MARK: - WKWebView related methods
-    
-    func registerWebviewDidChangeSizeObserve() {
-        webView.addObserver(self, forKeyPath: #keyPath(WKWebView.isLoading), options: .new, context: nil)
-        webView.scrollView.delegate = self
-    }
-    
-    func removeWebviewDidChangeSizeObserve() {
-        self.removeObserver(self.webView, forKeyPath: #keyPath(WKWebView.isLoading))
-    }
-    
-    override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
-        if object is WKWebView {
-            print("change", change!)
-//            print("web.isLoading", self.webView.isLoading)
-//            print("wk.size = \(self.webView.scrollView.contentSize)")
-            guard let newValue = change?[.newKey] else { return }
-            guard let isLoading = newValue as? Bool else { return }
-            guard isLoading == false else { return }
-            webView.evaluateJavaScript("document.body.scrollHeight", completionHandler: { [weak self] (value, error) in
-                if let value = value as? CGFloat {
-                    print("value", value)
-                    self?.reloadBodyCell(height: value)
-                }
-            })
-            
-        }
-    }
-    
-    override func scrollViewDidZoom(_ scrollView: UIScrollView) {
-        if scrollView == self.webView.scrollView {
-            self.reloadBodyCell(height: self.bodyCellHeight)
-        }
-    }
-    
-    var bodyCellHeight: CGFloat = 0.0
-    private func reloadBodyCell(height: CGFloat) {
-        self.bodyCellHeight = height
-        self.tableView.reloadSections(IndexSet(integer: 2), with: .none)
-    }
-    
     // MARK - Private methods
+  
     
-    private func loadText(_ text: MailPart) {
-        guard let html = text.decodedText else { return }
-        self.webView.loadHTMLString(html, baseURL: nil)
-        self.webView.scrollView.showsVerticalScrollIndicator = false
-        
-    }
-    
-    private func downloadData(with body: MailPart, completion: @escaping (Error?)->()) {
+    private func downloadParts(completion: @escaping (Error?)->()) {
         let uid = self.message.uid
-    
         self.sessionController.command({ (imap) in
-            for part in body.singleParts ({ ($0.isText == true && $0.id == self.textPart.id) || $0.isInline == true }) {
-                guard part.hasData == false else {
+            for part in self.parts {
+                guard self.hasDownloadedFile(part.fileName!) == false else {
                     continue
                 }
             
-                _ = imap.fetchData(uid: uid, partId: part.id, completion: { (data) in
-        
-                    self.message.body![part.id]?.data = data
-                    
-                    if part.id == self.textPart.id {
-                        self.textPart = self.message.body![part.id]
-                    }
-                    
+                var part = part
+                let r = imap.fetchData(uid: uid, partId: part.id, completion: { (data) in
+                    part.data = data
+                    self.message.body![part.id]? = part
                 })
+                
+                if r.isSuccess == false &&
+                    part.id == self.textPart.id {
+                    throw r
+                }
+                
+                if let error = self.write(part: part),
+                    part.id == self.textPart.id {
+                    throw error
+                }
             }
-            
             OperationQueue.main.addOperation {
                 completion(nil)
             }
-        }) { (_) in
-//            OperationQueue.main.addOperation {
-//                completion(error)
-//            }
-        }
+        }, catched: { (error) in
+            OperationQueue.main.addOperation {
+                completion(error)
+            }
+        })
     }
     
-
-    // MARK: - Table view data source
-    enum Section: Int {
-        case subject
-        case from
-        case body
-        
-        static var count: Int = 3
-        init(_ section: Int) {
-            switch section {
-            case 0:
-                self = .subject
-            case 1:
-                self = .from
-            case 2:
-                self = .body
-            default:
-                fatalError()
+    func write(part: MailPart) -> Error? {
+        do {
+            let file = self.directoryFile.add(file: part.fileName!)
+            if file.isExist == false {
+                try file.create()
             }
+            try part.decodedData!.write(to: file.url, options: .completeFileProtection)
+            return nil
+        } catch let error {
+            return error
         }
     }
-
-    override func numberOfSections(in tableView: UITableView) -> Int {
-        // #warning Incomplete implementation, return the number of sections
-        return Section.count
-    }
-
-    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        // #warning Incomplete implementation, return the number of rows
-        return 1
-    }
-    
-    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        switch Section(indexPath.section) {
-        case .subject:
-            return MessageDetailSubjectCell.cellHeight(withSubject: self.message.header!.subject, maxWidth: self.view.bounds.width)
-        case .from:
-            return MessageDetailFromCell.cellHeight()
-        case .body:
-            let minimumHeight = self.view.bounds.size.height - MessageDetailSubjectCell.cellHeight(withSubject: self.message.header!.subject, maxWidth: self.view.bounds.width) - MessageDetailFromCell.cellHeight()
-            
-            /*
-            if self.textPart.hasData == true && self.webView.scrollView.contentSize.height >= minimumHeight {
-                return self.webView.scrollView.contentSize.height
-                
-                
-            } else {
-                return minimumHeight
-            }
- */
-            if self.textPart.hasData == true {
-                // todo: 縦横比率を考慮して、+ or - の増加分heightを上げる。
-                let viewRatio = self.view.frame.size.width / self.bodyCellHeight
-                let heigh = self.bodyCellHeight * self.webView.scrollView.zoomScale * viewRatio
-                print("cellHeigh", heigh)
-                if heigh > minimumHeight {
-                    return heigh
-                } else {
-                    return minimumHeight
-                }
-                
-            } else {
-                return minimumHeight
-            }
-        }
-    }
-
-    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        switch Section(indexPath.section) {
-        case .subject:
-            let cell = tableView.dequeueReusableCell(withIdentifier: "MessageDetailSubjectCell", for: indexPath) as! MessageDetailSubjectCell
-            cell.ibSubjectLabel.text = self.message.header?.subject
-            return cell
-            
-        case .from:
-            let cell = tableView.dequeueReusableCell(withIdentifier: "MessageDetailFromCell", for: indexPath) as! MessageDetailFromCell
-            cell.ibFromLabel.text = self.message.header?.from.first?.preferedDisplayName
-            return cell
-        case .body:
-            let cell = tableView.dequeueReusableCell(withIdentifier: "MessageDetailBodyCell", for: indexPath) as! MessageDetailBodyCell
-            
-            if cell.subviews.contains(self.webView) == false {
-                self.webView.frame = cell.bounds
-                cell.addSubview(self.webView)
-                
-                // handles changing webView size.
-                self.registerWebviewDidChangeSizeObserve()
-            }
-            return cell
-        }
-    }
- 
-
     
     /*
     // Override to support conditional editing of the table view.
