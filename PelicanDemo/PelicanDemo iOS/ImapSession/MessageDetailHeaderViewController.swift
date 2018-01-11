@@ -8,6 +8,16 @@
 import UIKit
 import Pelican
 
+extension Optional where Wrapped == Int {
+    static func >(lhs: Int?, rhs: Int) -> Bool {
+        if let lhs = lhs {
+            return lhs > rhs
+        } else {
+            return false
+        }
+    }
+}
+
 class MessageDetailHeaderViewController: UITableViewController {
 
     var header: MessageHeader!
@@ -27,41 +37,78 @@ class MessageDetailHeaderViewController: UITableViewController {
         // Dispose of any resources that can be recreated.
     }
 
+    var isDetailShowed: Bool = false
+    var height: CGFloat {
+        var indexPaths: [IndexPath] = [IndexPath(row: 0, section: Section.subject.rawValue)]
+        if self.isDetailShowed == false {
+            for i in 0..<self.detailRows.count {
+                indexPaths.append(IndexPath(row: i, section: Section.detail.rawValue))
+            }
+        }
+        return indexPaths.reduce(into: 0.0) { (accumulator, indexPath) in
+            let cell = self.tableView.cellForRow(at: indexPath)
+            accumulator += cell?.frame.size.height ?? 0.0
+        }
+    }
+    
+    struct DetailRow: RawRepresentable, OptionSet {
+        static let from = DetailRow(rawValue: 1 << 0)
+        static let to   = DetailRow(rawValue: 1 << 1)
+        static let cc   = DetailRow(rawValue: 1 << 2)
+        static let bcc  = DetailRow(rawValue: 1 << 3)
+        static let date = DetailRow(rawValue: 1 << 4)
+        
+        let rawValue: Int
+        init(rawValue: Int) {
+            self.rawValue = rawValue
+        }
+    }
+    
     // MARK: - Table view data source
     
     enum Section: Int {
         case subject
-        case from
-        
-        static var count: Int = 2
+        case detail
         init(_ section: Int) {
             switch section {
             case 0:
                 self = .subject
             case 1:
-                self = .from
+                self = .detail
             default:
                 fatalError()
             }
         }
     }
     
+    lazy var detailRows: [DetailRow] = {
+        var rows: [DetailRow] = [.from, .to, .date]
+        if self.header.cc?.count > 0 {
+            rows.append(.cc)
+        }
+        if self.header.bcc?.count > 0 {
+            rows.append(.bcc)
+        }
+        
+        rows.sort(by: { $0.rawValue < $1.rawValue })
+        return rows
+    }()
+    
     override func numberOfSections(in tableView: UITableView) -> Int {
         // #warning Incomplete implementation, return the number of sections
-        return Section.count
+        if self.isDetailShowed == false {
+            return 1
+        } else {
+            return 2
+        }
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        // #warning Incomplete implementation, return the number of rows
-        return 1
-    }
-    
-    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        switch Section(indexPath.section) {
+        switch Section(section) {
         case .subject:
-            return MessageDetailSubjectCell.cellHeight(withSubject: self.header.subject, maxWidth: self.view.bounds.width)
-        case .from:
-            return MessageDetailFromCell.cellHeight()
+            return 1
+        case .detail:
+            return self.detailRows.count
         }
     }
     
@@ -71,9 +118,34 @@ class MessageDetailHeaderViewController: UITableViewController {
             let cell = tableView.dequeueReusableCell(withIdentifier: "MessageDetailSubjectCell", for: indexPath) as! MessageDetailSubjectCell
             cell.ibSubjectLabel.text = self.header.subject
             return cell
-        case .from:
-            let cell = tableView.dequeueReusableCell(withIdentifier: "MessageDetailFromCell", for: indexPath) as! MessageDetailFromCell
-            cell.ibFromLabel.text = self.header.from.first?.displayName
+        case .detail:
+            let cell = tableView.dequeueReusableCell(withIdentifier: "MessageDetailFieldCell", for: indexPath) as! MessageDetailFieldCell
+            
+            let row = self.detailRows[indexPath.row]
+            switch row {
+            case .from:
+                cell.ibTitleLabel.text = "from"
+                cell.ibValueLabel.text = self.header.from.map { $0.preferedDisplayName }.joined(separator: ", ")
+            case .to:
+                cell.ibTitleLabel.text = "to"
+                cell.ibValueLabel.text = self.header.to.map { $0.displayName }.joined(separator: ", ")
+            case .cc:
+                cell.ibTitleLabel.text = "cc"
+                cell.ibValueLabel.text = self.header.cc!.map { $0.displayName }.joined(separator: ", ")
+            case .bcc:
+                cell.ibTitleLabel.text = "bcc"
+                cell.ibValueLabel.text = self.header.bcc!.map { $0.displayName }.joined(separator: ", ")
+            case .date:
+                cell.ibTitleLabel.text = "date"
+                let df = DateFormatter()
+                df.calendar = Calendar(identifier: .gregorian)
+                df.doesRelativeDateFormatting = true
+                df.dateStyle = .short
+                df.timeStyle = .short
+                cell.ibValueLabel.text = df.string(from: self.header.date!)
+            default:
+                fatalError()
+            }
             return cell
         }
     }

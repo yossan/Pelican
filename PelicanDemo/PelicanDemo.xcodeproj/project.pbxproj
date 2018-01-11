@@ -8,8 +8,9 @@
 
 /* Begin PBXBuildFile section */
 		4A1C55BD20046B550002E4EF /* MessageDetailHeaderViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A1C55BC20046B540002E4EF /* MessageDetailHeaderViewController.swift */; };
+		4A30A0DA200758B20076436E /* DynamicSizeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A30A0D9200758B20076436E /* DynamicSizeView.swift */; };
 		4A49B4652001CBBC004941CC /* MessageDetailSubjectCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A49B4642001CBBC004941CC /* MessageDetailSubjectCell.swift */; };
-		4A49B4672001CBCD004941CC /* MessageDetailFromCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A49B4662001CBCD004941CC /* MessageDetailFromCell.swift */; };
+		4A49B4672001CBCD004941CC /* MessageDetailFieldCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A49B4662001CBCD004941CC /* MessageDetailFieldCell.swift */; };
 		4A49B4692001CBE1004941CC /* MessageDetailBodyCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A49B4682001CBE1004941CC /* MessageDetailBodyCell.swift */; };
 		4A49B46C2001D175004941CC /* MessageHeader+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A49B46B2001D175004941CC /* MessageHeader+.swift */; };
 		4AA1DE541FFDCCB100AC9FC7 /* OAuthClient.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4AA1DE571FFDCCB100AC9FC7 /* OAuthClient.framework */; };
@@ -62,8 +63,9 @@
 
 /* Begin PBXFileReference section */
 		4A1C55BC20046B540002E4EF /* MessageDetailHeaderViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageDetailHeaderViewController.swift; sourceTree = "<group>"; };
+		4A30A0D9200758B20076436E /* DynamicSizeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DynamicSizeView.swift; sourceTree = "<group>"; };
 		4A49B4642001CBBC004941CC /* MessageDetailSubjectCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageDetailSubjectCell.swift; sourceTree = "<group>"; };
-		4A49B4662001CBCD004941CC /* MessageDetailFromCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageDetailFromCell.swift; sourceTree = "<group>"; };
+		4A49B4662001CBCD004941CC /* MessageDetailFieldCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageDetailFieldCell.swift; sourceTree = "<group>"; };
 		4A49B4682001CBE1004941CC /* MessageDetailBodyCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageDetailBodyCell.swift; sourceTree = "<group>"; };
 		4A49B46B2001D175004941CC /* MessageHeader+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MessageHeader+.swift"; sourceTree = "<group>"; };
 		4AA1DE571FFDCCB100AC9FC7 /* OAuthClient.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = OAuthClient.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -194,9 +196,10 @@
 				4AD033DC1FEF4D2400084911 /* MessageListViewController.swift */,
 				4AC69B681FFCD08900341C83 /* MessageCell.swift */,
 				4AA1DE5D1FFE101E00AC9FC7 /* MessageDetailViewController.swift */,
+				4A30A0D9200758B20076436E /* DynamicSizeView.swift */,
 				4A1C55BC20046B540002E4EF /* MessageDetailHeaderViewController.swift */,
 				4A49B4642001CBBC004941CC /* MessageDetailSubjectCell.swift */,
-				4A49B4662001CBCD004941CC /* MessageDetailFromCell.swift */,
+				4A49B4662001CBCD004941CC /* MessageDetailFieldCell.swift */,
 				4A49B4682001CBE1004941CC /* MessageDetailBodyCell.swift */,
 			);
 			path = ImapSession;
@@ -305,7 +308,7 @@
 				4AD31D381FF92BC6009A2CDB /* AppConfiguration.swift in Sources */,
 				4AA1DE5E1FFE101E00AC9FC7 /* MessageDetailViewController.swift in Sources */,
 				4AD31D341FF9295C009A2CDB /* GmailConfiguration.swift in Sources */,
-				4A49B4672001CBCD004941CC /* MessageDetailFromCell.swift in Sources */,
+				4A49B4672001CBCD004941CC /* MessageDetailFieldCell.swift in Sources */,
 				4AD31D311FF909B7009A2CDB /* Token+.swift in Sources */,
 				4A49B4692001CBE1004941CC /* MessageDetailBodyCell.swift in Sources */,
 				4AFF4FC61FF78BDE00C2FC72 /* AuthorizationSession.swift in Sources */,
@@ -317,6 +320,7 @@
 				4AFF4FC91FF7C5F000C2FC72 /* StoredData.swift in Sources */,
 				4AFF4FC21FF77F4F00C2FC72 /* ImapSessionViewController.swift in Sources */,
 				4AD033DD1FEF4D2400084911 /* MessageListViewController.swift in Sources */,
+				4A30A0DA200758B20076436E /* DynamicSizeView.swift in Sources */,
 				4AFF4FBC1FF77F0B00C2FC72 /* AuthorizationSessionViewController.swift in Sources */,
 				4AD0338E1FEE38CA00084911 /* AppDelegate.swift in Sources */,
 				4AC69B6A1FFCD08900341C83 /* MessageCell.swift in Sources */,

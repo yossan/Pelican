@@ -26,16 +26,16 @@ class MessageListViewController: UITableViewController {
         // self.navigationItem.rightBarButtonItem = self.editButtonItem
         
         self.sessionController.command({ (imap) in
-            try imap.fetch(range: 1..<10, options: [.messageHeader, .bodystructure], completion: { (message) in
-                OperationQueue.main.addOperation {
-                    self.appendMessage(message)
-                }
-            }).check()
-//            try imap.fetchLast(num: 20, options: [.messageHeader, .bodystructure]) { (message) in
+//            try imap.fetch(range: 1..<50, options: [.messageHeader, .bodystructure], completion: { (message) in
 //                OperationQueue.main.addOperation {
 //                    self.appendMessage(message)
 //                }
-//            }.check()
+//            }).check()
+            try imap.fetchLast(num: 50, options: [.messageHeader, .bodystructure]) { (message) in
+                OperationQueue.main.addOperation {
+                    self.appendMessage(message)
+                }
+            }.check()
         }, catched: { (error) in
             self.sessionController.handleImapError(error as? ImapSessionError)
         })
@@ -141,8 +141,9 @@ class MessageListViewController: UITableViewController {
             let selectedIndex = self.tableView.indexPathForSelectedRow {
             
             let dest = segue.destination as! MessageDetailViewController
-            let part = self.messages[selectedIndex.row]
-            dest.message = part
+            let selectedMessage = self.messages[selectedIndex.row]
+            dest.message = selectedMessage
+            
         }
     }
 

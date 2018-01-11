@@ -1,5 +1,5 @@
 //
-//  MessageDetailFromCell.swift
+//  MessageDetailFieldCell.swift
 //  PelicanDemo iOS
 //
 //  Created by yoshi-kou on 2018/01/07.
@@ -7,9 +7,10 @@
 
 import UIKit
 
-class MessageDetailFromCell: UITableViewCell {
+class MessageDetailFieldCell: UITableViewCell {
 
-    @IBOutlet var ibFromLabel: UILabel!
+    @IBOutlet var ibTitleLabel: UILabel!
+    @IBOutlet var ibValueLabel: UILabel!
     
     override func awakeFromNib() {
         super.awakeFromNib()

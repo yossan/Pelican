@@ -29,7 +29,7 @@ extension MailPart {
             case .notSupported: return nil
             }
         case let .basic(_, _, fields, _):
-            return fields.name ?? fields.id
+            return fields.name
         default:
             return nil
         }

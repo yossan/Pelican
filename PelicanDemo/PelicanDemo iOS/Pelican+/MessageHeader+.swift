@@ -13,3 +13,14 @@ extension AddressMailBox {
         return self.displayName ?? self.email
     }
 }
+
+extension Address {
+    public var displayName: String {
+        switch self {
+        case .mailBox(let mailbox):
+            return mailbox.preferedDisplayName
+        case .group(let grop):
+            return grop.displayName
+        }
+    }
+}

@@ -9,31 +9,41 @@ import UIKit
 import Pelican
 import WebKit
 
-class MessageDetailViewController: UIViewController, UIScrollViewDelegate {
+class MessageDetailViewController: UIViewController, UIScrollViewDelegate, WKNavigationDelegate, DynamicSizeViewDelegate {
 
     // MARK: - IBOutlet related properties
-//    @IBOutlet var headerViewController: MessageDetailHeaderViewController!
-    @IBOutlet var webContentView: UIView!
     
-    var webView: WKWebView!
+    @IBOutlet weak var webContentView: UIView!
+    private var webView: WKWebView!
+    private var loadingTextNavigation: WKNavigation? = nil
+    
+    @IBOutlet weak var headerContainerView: UIView!
+    var headerFieldsController: MessageDetailHeaderViewController {
+        return self.childViewControllers[0] as! MessageDetailHeaderViewController
+    }
     
     // MARK: - Instance properties
-
-    var message: Message!
     
-    var sessionController: ImapSessionViewController {
+    private var sessionController: ImapSessionViewController {
         return self.parent?.parent as! ImapSessionViewController
     }
     
-    var textPart: MailPart {
-        return self.message.body!.textPart(prefer: .html)
+    var message: Message!
+    private var copiedMessageBody: MailPart!
+    
+    private var textPart: MailPart {
+        return self.copiedMessageBody.textPart(prefer: .html)
     }
     
-    var parts: [MailPart] {
-        return self.message.body!.singleParts ({ ($0.isText == true && $0.id == textPart.id) || ($0.isInline == true || $0.fileName != nil) })
+    private var inlineParts: [MailPart] {
+        return self.copiedMessageBody.singleParts ({ $0.isInline == true &&  $0.bodyFields?.id != nil && $0.fileName != nil })
     }
     
-    var directoryFile: File {
+    private var parts: [MailPart] {
+        return self.copiedMessageBody.singleParts ({ ($0.isText == true && $0.id == textPart.id) || ($0.isInline == true && $0.bodyFields?.id != nil && $0.fileName != nil) })
+    }
+    
+    private var directoryFile: File {
         let directory = Paths.messages.add(file: "INBOX").add(file: "\(self.message.uid)")
         return directory
     }
@@ -53,22 +63,30 @@ class MessageDetailViewController: UIViewController, UIScrollViewDelegate {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        guard self.checkBodyValidation() else { return }
+        self.headerFieldsController.header = self.message.header
+        guard self.copyMessageBody() else { return }
         
-        self.webView = self.makeWebView()
-        self.webContentView.addSubview(self.webView)
+        self.setupUI()
         self.loadBody()
     }
     
-    func checkBodyValidation() -> Bool {
-        if self.message.body != nil &&
-            self.parts.contains(where: { $0.isText }) {
+    // MARK: - private methods
+    private func setupUI() {
+        self.webView = self.makeWebView()
+        self.webContentView.addSubview(self.webView)
+    }
+    
+    private func copyMessageBody() -> Bool {
+        guard let body = self.message.body else { return false }
+        self.copiedMessageBody = body
+        
+        if self.parts.contains(where: { $0.isText }) {
             return true
         }
         return false
     }
     
-    func loadBody() {
+    private func loadBody() {
         if self.hasDownloadedFiles() {
             self.makeWebViewLoad()
         } else {
@@ -82,7 +100,7 @@ class MessageDetailViewController: UIViewController, UIScrollViewDelegate {
         }
     }
     
-    func hasDownloadedFiles() -> Bool {
+    private func hasDownloadedFiles() -> Bool {
         var result = true
         for subPart in parts {
             guard self.hasDownloadedFile(subPart.fileName!) == false else {
@@ -94,23 +112,71 @@ class MessageDetailViewController: UIViewController, UIScrollViewDelegate {
         return result
     }
     
-    func hasDownloadedFile(_ name: String) -> Bool {
+    private func hasDownloadedFile(_ name: String) -> Bool {
         let file = self.directoryFile.add(file: name)
         return file.isExist
     }
     
-    func fileURL(by name: String) -> URL {
+    private func fileURL(by name: String) -> URL {
         let file = self.directoryFile.add(file: name)
         return file.url
     }
     
-    func makeWebViewLoad() {
+    private func downloadParts(completion: @escaping (Error?)->()) {
+        let uid = self.message.uid
+        self.sessionController.command({ (imap) in
+            for part in self.parts {
+                guard self.hasDownloadedFile(part.fileName!) == false else {
+                    continue
+                }
+                
+                var part = part
+                let r = imap.fetchData(uid: uid, partId: part.id, completion: { (data) in
+                    part.data = data
+                    self.copiedMessageBody[part.id]? = part
+                })
+                
+                if r.isSuccess == false &&
+                    part.id == self.textPart.id {
+                    throw r
+                }
+                
+                if let error = self.write(part: part),
+                    part.id == self.textPart.id {
+                    throw error
+                }
+            }
+            OperationQueue.main.addOperation {
+                completion(nil)
+            }
+        }, catched: { (error) in
+            OperationQueue.main.addOperation {
+                completion(error)
+            }
+        })
+    }
+    
+    private func write(part: MailPart) -> Error? {
+        do {
+            let file = self.directoryFile.add(file: part.fileName!)
+            if file.isExist == false {
+                try file.create()
+            }
+            try part.decodedData!.write(to: file.url, options: .completeFileProtection)
+            return nil
+        } catch let error {
+            return error
+        }
+    }
+    
+    
+    private func makeWebViewLoad() {
         let bodyFields = self.textPart.bodyFields!
         let encoding = self.stringEncoding(from: bodyFields.charset)
         let textURL = self.fileURL(by: self.textPart.fileName!)
         if let data = try? Data(contentsOf: textURL),
             let html = String(data: data, encoding: encoding) {
-            self.webView.loadHTMLString(html, baseURL: textURL)
+            self.loadingTextNavigation = self.webView.loadHTMLString(html, baseURL: textURL)
         }
     }
     
@@ -150,112 +216,80 @@ class MessageDetailViewController: UIViewController, UIScrollViewDelegate {
         }
     }
     
-    func makeWebView() -> WKWebView {
-        let jscript = "var meta = document.createElement('meta'); meta.setAttribute('name', 'viewport'); meta.setAttribute('content', 'width=device-width'); document.getElementsByTagName('head')[0].appendChild(meta);"
-        let userScript = WKUserScript(source: jscript, injectionTime: .atDocumentEnd, forMainFrameOnly: true)
-        let wkUController = WKUserContentController()
-        wkUController.addUserScript(userScript)
-        let wkWebConfig = WKWebViewConfiguration()
-        wkWebConfig.userContentController = wkUController
+    private func makeWebView() -> WKWebView {
+        let controller = WKUserContentController()
+        controller.addUserScript(self.scriptForViewPort())
+        controller.addUserScript(self.scriptForLoadingEmbededImg())
+        let config = WKWebViewConfiguration()
+        config.userContentController = controller
         
-        let webView = WKWebView(frame: self.webContentView.bounds, configuration: wkWebConfig)
+        let webView = WKWebView(frame: self.webContentView.bounds, configuration: config)
+        webView.navigationDelegate = self
+        webView.scrollView.delegate = self
         webView.autoresizingMask = [.flexibleTopMargin, .flexibleWidth, .flexibleHeight, .flexibleLeftMargin, .flexibleRightMargin, .flexibleBottomMargin]
         return webView
     }
     
-    // MARK - Private methods
-  
-    
-    private func downloadParts(completion: @escaping (Error?)->()) {
-        let uid = self.message.uid
-        self.sessionController.command({ (imap) in
-            for part in self.parts {
-                guard self.hasDownloadedFile(part.fileName!) == false else {
-                    continue
-                }
-            
-                var part = part
-                let r = imap.fetchData(uid: uid, partId: part.id, completion: { (data) in
-                    part.data = data
-                    self.message.body![part.id]? = part
-                })
-                
-                if r.isSuccess == false &&
-                    part.id == self.textPart.id {
-                    throw r
-                }
-                
-                if let error = self.write(part: part),
-                    part.id == self.textPart.id {
-                    throw error
-                }
-            }
-            OperationQueue.main.addOperation {
-                completion(nil)
-            }
-        }, catched: { (error) in
-            OperationQueue.main.addOperation {
-                completion(error)
-            }
-        })
+    private func scriptForViewPort() -> WKUserScript {
+        let javascript =
+        """
+        let meta = document.createElement('meta');
+        meta.setAttribute('name', 'viewport');
+        meta.setAttribute('content', 'width=device-width');
+        document.getElementsByTagName('head')[0].appendChild(meta);
+        """
+        return WKUserScript(source: javascript, injectionTime: .atDocumentEnd, forMainFrameOnly: true)
     }
     
-    func write(part: MailPart) -> Error? {
-        do {
-            let file = self.directoryFile.add(file: part.fileName!)
-            if file.isExist == false {
-                try file.create()
+    private func scriptForLoadingEmbededImg() -> WKUserScript {
+        let javascript =
+        """
+        function loadEmbededImg(inlines) {
+            let imgs = document.getElementsByTagName("img");
+            let re = /^cid:(\\w+)$/i;
+            for (img of imgs) {
+                let found = img.src.match(re);
+                if (found.length === 2) {
+                    let cid = found[1];
+                    let name = inlines[cid];
+                    img.src = `./${name}`;
+                }
             }
-            try part.decodedData!.write(to: file.url, options: .completeFileProtection)
-            return nil
-        } catch let error {
-            return error
+        }
+        """
+        return WKUserScript(source: javascript, injectionTime: .atDocumentEnd, forMainFrameOnly: true)
+    }
+    
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        if self.webView.scrollView == scrollView {
+            self.headerContainerView.frame.origin.y = (scrollView.contentOffset.y + self.headerContainerView.frame.size.height) * (-1)
         }
     }
     
-    /*
-    // Override to support conditional editing of the table view.
-    override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-        // Return false if you do not want the specified item to be editable.
-        return true
+    func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
+        if self.loadingTextNavigation == navigation {
+            self.callLoadingEmbededImgIfNecessary()
+        }
     }
-    */
-
-    /*
-    // Override to support editing the table view.
-    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
-        if editingStyle == .delete {
-            // Delete the row from the data source
-            tableView.deleteRows(at: [indexPath], with: .fade)
-        } else if editingStyle == .insert {
-            // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-        }    
+    
+    private func callLoadingEmbededImgIfNecessary() {
+        let inlines = self.inlineParts
+        if inlines.count > 0 {
+            let accumulator: [String] = []
+            let cidInfo = inlines.reduce(into: accumulator) { (accumulator ,part) in
+                let cid = part.bodyFields!.id!.trimmingCharacters(in: .symbols)
+                let name = part.bodyFields!.name!
+                accumulator.append("\"\(cid)\":\"\(name)\"")
+                }.joined(separator: ",")
+            let js = "loadEmbededImg({\(cidInfo)})"
+            webView.evaluateJavaScript(js, completionHandler: nil)
+        }
     }
-    */
-
-    /*
-    // Override to support rearranging the table view.
-    override func tableView(_ tableView: UITableView, moveRowAt fromIndexPath: IndexPath, to: IndexPath) {
-
+    
+    //MARK: - DynamicSizeViewDelegate
+    func intrinsicContentSizeForDynamicSizeView(_ view: DynamicSizeView) -> CGSize {
+        let headerHeight: CGFloat = self.headerFieldsController.height
+        webView.scrollView.contentInset.top = headerHeight
+        return CGSize(width: self.view.frame.size.width, height:  headerHeight)
     }
-    */
-
-    /*
-    // Override to support conditional rearranging of the table view.
-    override func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
-        // Return false if you do not want the item to be re-orderable.
-        return true
-    }
-    */
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
-    }
-    */
-
 }
