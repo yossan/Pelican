@@ -8,16 +8,6 @@
 import UIKit
 import Pelican
 
-extension Optional where Wrapped == Int {
-    static func >(lhs: Int?, rhs: Int) -> Bool {
-        if let lhs = lhs {
-            return lhs > rhs
-        } else {
-            return false
-        }
-    }
-}
-
 class MessageDetailHeaderViewController: UITableViewController {
 
     var header: MessageHeader!
@@ -30,6 +20,15 @@ class MessageDetailHeaderViewController: UITableViewController {
 
         // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
         // self.navigationItem.rightBarButtonItem = self.editButtonItem
+        
+//        self.tableView.isUserInteractionEnabled = false
+        self.tableView.allowsSelection = false
+        self.tableView.isScrollEnabled = false
+        self.tableView.delaysContentTouches = true
+        self.tableView.bounces = false
+        self.tableView.showsVerticalScrollIndicator = false
+        self.tableView.showsHorizontalScrollIndicator = false
+        
     }
 
     override func didReceiveMemoryWarning() {
@@ -37,17 +36,45 @@ class MessageDetailHeaderViewController: UITableViewController {
         // Dispose of any resources that can be recreated.
     }
 
+    // MARK: - IBAction
+    @IBAction func onDetailBt(_ sender: UIButton) {
+        self.isDetailShowed = !self.isDetailShowed
+        self.view.superview?.invalidateIntrinsicContentSize()
+//        self.tableView.beginUpdates()
+//        self.tableView.insertSections(IndexSet(integer: Section.detail.rawValue), with: .top)
+////        self.tableView.reloadSections(, with: .top)
+//        
+//        // changes content size
+//        
+//        self.tableView.endUpdates()
+        self.tableView.reloadData()
+        
+        
+    }
+    
+    // MARK: -
+    
     var isDetailShowed: Bool = false
+    
     var height: CGFloat {
         var indexPaths: [IndexPath] = [IndexPath(row: 0, section: Section.subject.rawValue)]
-        if self.isDetailShowed == false {
+        if self.isDetailShowed == true {
             for i in 0..<self.detailRows.count {
                 indexPaths.append(IndexPath(row: i, section: Section.detail.rawValue))
             }
         }
         return indexPaths.reduce(into: 0.0) { (accumulator, indexPath) in
-            let cell = self.tableView.cellForRow(at: indexPath)
-            accumulator += cell?.frame.size.height ?? 0.0
+            switch Section(indexPath.section) {
+            case .subject:
+                let subject = self.header.subject
+                let cellHeight = MessageDetailSubjectCell.cellHeight(withSubject: subject, cellWidth: self.view.frame.size.width)
+                accumulator += cellHeight
+            case .detail:
+                let row = self.detailRows[indexPath.row]
+                let (title, value) = self.titleAndValueInDetailRow(row)
+                let cellHeight = MessageDetailFieldCell.cellHeight(withTitle: title, value: value, cellWidth: self.view.frame.size.width)
+                accumulator += cellHeight
+            }
         }
     }
     
@@ -94,6 +121,38 @@ class MessageDetailHeaderViewController: UITableViewController {
         return rows
     }()
     
+    func titleAndValueInDetailRow(_ row: DetailRow) -> (String, String) {
+        let title: String
+        let value: String
+        switch row {
+        case .from:
+            title = "from"
+            value = self.header.from.map { $0.preferedDisplayName }.joined(separator: ", ")
+        case .to:
+            title = "to  "
+            value = self.header.to.map { $0.displayName }.joined(separator: ", ")
+        case .cc:
+            title = "cc  "
+            value = self.header.cc!.map { $0.displayName }.joined(separator: ", ")
+        case .bcc:
+            title = "bcc "
+            value = self.header.bcc!.map { $0.displayName }.joined(separator: ", ")
+        case .date:
+            title = "date"
+            value = {
+                let df = DateFormatter()
+                df.calendar = Calendar(identifier: .gregorian)
+                df.doesRelativeDateFormatting = true
+                df.dateStyle = .short
+                df.timeStyle = .short
+                return df.string(from: self.header.date!)
+            }()
+        default:
+            fatalError()
+        }
+        return (title, value)
+    }
+    
     override func numberOfSections(in tableView: UITableView) -> Int {
         // #warning Incomplete implementation, return the number of sections
         if self.isDetailShowed == false {
@@ -122,30 +181,9 @@ class MessageDetailHeaderViewController: UITableViewController {
             let cell = tableView.dequeueReusableCell(withIdentifier: "MessageDetailFieldCell", for: indexPath) as! MessageDetailFieldCell
             
             let row = self.detailRows[indexPath.row]
-            switch row {
-            case .from:
-                cell.ibTitleLabel.text = "from"
-                cell.ibValueLabel.text = self.header.from.map { $0.preferedDisplayName }.joined(separator: ", ")
-            case .to:
-                cell.ibTitleLabel.text = "to"
-                cell.ibValueLabel.text = self.header.to.map { $0.displayName }.joined(separator: ", ")
-            case .cc:
-                cell.ibTitleLabel.text = "cc"
-                cell.ibValueLabel.text = self.header.cc!.map { $0.displayName }.joined(separator: ", ")
-            case .bcc:
-                cell.ibTitleLabel.text = "bcc"
-                cell.ibValueLabel.text = self.header.bcc!.map { $0.displayName }.joined(separator: ", ")
-            case .date:
-                cell.ibTitleLabel.text = "date"
-                let df = DateFormatter()
-                df.calendar = Calendar(identifier: .gregorian)
-                df.doesRelativeDateFormatting = true
-                df.dateStyle = .short
-                df.timeStyle = .short
-                cell.ibValueLabel.text = df.string(from: self.header.date!)
-            default:
-                fatalError()
-            }
+            let (title, value) = self.titleAndValueInDetailRow(row)
+            cell.ibTitleLabel.text = title
+            cell.ibValueLabel.text = value
             return cell
         }
     }

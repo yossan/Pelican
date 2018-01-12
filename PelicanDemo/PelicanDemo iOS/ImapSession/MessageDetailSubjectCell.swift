@@ -7,6 +7,11 @@
 
 import UIKit
 
+// MARK: - Xib settings
+private let DefaultMinimumCellHeight: CGFloat = 76.0
+private let SubjectFont: UIFont = UIFont(name: "HelveticaNeue-Bold", size: 20)!
+private let OtherVerticalSpacing: CGFloat = 61.5
+
 class MessageDetailSubjectCell: UITableViewCell {
 
     @IBOutlet var ibSubjectLabel: UILabel!
@@ -22,20 +27,19 @@ class MessageDetailSubjectCell: UITableViewCell {
         // Configure the view for the selected state
     }
     
-    class func cellHeight(withSubject subject: String?, maxWidth: CGFloat) -> CGFloat {
+    class func cellHeight(withSubject subject: String?, cellWidth: CGFloat) -> CGFloat {
         guard let subject = subject else {
-            return 70.0
+            return DefaultMinimumCellHeight
         }
         
         let text = subject as NSString
-        
-        let subjectLabelFont = UIFont(name: "Hiragino Maru Gothic ProN W4", size: 20)!
-        let height = text.boundingRect(
-            with: CGSize(width: maxWidth, height: 0),
+        let labelHeight = text.boundingRect(
+            with: CGSize(width: cellWidth, height: 0),
             options: .usesLineFragmentOrigin,
-            attributes: [.font : subjectLabelFont],
+            attributes: [.font : SubjectFont],
             context: nil).height
         
-        return height + 20 < 70.0 ? 70.0 : height + 20
+        let cellHeight = labelHeight + OtherVerticalSpacing
+        return max(cellHeight, DefaultMinimumCellHeight)
     }
 }

@@ -63,7 +63,6 @@ class MessageDetailViewController: UIViewController, UIScrollViewDelegate, WKNav
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.headerFieldsController.header = self.message.header
         guard self.copyMessageBody() else { return }
         
         self.setupUI()
@@ -72,8 +71,12 @@ class MessageDetailViewController: UIViewController, UIScrollViewDelegate, WKNav
     
     // MARK: - private methods
     private func setupUI() {
+        self.headerFieldsController.header = self.message.header
+//        self.headerContainerView.isUserInteractionEnabled = false
+        
         self.webView = self.makeWebView()
         self.webContentView.addSubview(self.webView)
+        self.webView.scrollView.addSubview(self.headerContainerView)
     }
     
     private func copyMessageBody() -> Bool {
@@ -169,7 +172,6 @@ class MessageDetailViewController: UIViewController, UIScrollViewDelegate, WKNav
         }
     }
     
-    
     private func makeWebViewLoad() {
         let bodyFields = self.textPart.bodyFields!
         let encoding = self.stringEncoding(from: bodyFields.charset)
@@ -181,39 +183,8 @@ class MessageDetailViewController: UIViewController, UIScrollViewDelegate, WKNav
     }
     
     private func stringEncoding(from charset: String?) -> String.Encoding {
-        guard let charset = charset else {
-            return .ascii
-        }
-        switch charset.lowercased() {
-        case "utf-8": return .utf8
-        case "utf-16": return .utf16
-        case "utf-16be": return .utf16BigEndian
-        case "utf-16le": return .utf16LittleEndian
-        case "utf-32": return .utf32
-        case "utf-32be": return .utf32BigEndian
-        case "utf-32le": return .utf32LittleEndian
-        case "iso-2022-jp": return .iso2022JP
-        case "euc-jp": return .japaneseEUC
-        case "shift_jis": return .shiftJIS
-        case "‎windows-1250": return .windowsCP1250
-        case "‎windows-1251": return .windowsCP1251
-        case "‎windows-1252": return .windowsCP1252
-        case "‎windows-1253": return .windowsCP1253
-        case "‎windows-1254": return .windowsCP1254
-        case "big5":
-            let cfEnc = CFStringEncodings.big5
-            let nsEnc = CFStringConvertEncodingToNSStringEncoding(CFStringEncoding(cfEnc.rawValue))
-            
-            return String.Encoding(rawValue: nsEnc)
-        case "GB18030":
-            let cfEnc = CFStringEncodings.GB_18030_2000
-            let nsEnc = CFStringConvertEncodingToNSStringEncoding(CFStringEncoding(cfEnc.rawValue))
-            
-            return String.Encoding(rawValue: nsEnc)
-            
-        default:
-            return .ascii
-        }
+        guard let charset = charset else { return .ascii }
+        return String.Encoding(charset: charset) ?? .ascii
     }
     
     private func makeWebView() -> WKWebView {
@@ -287,9 +258,19 @@ class MessageDetailViewController: UIViewController, UIScrollViewDelegate, WKNav
     }
     
     //MARK: - DynamicSizeViewDelegate
+    var previousTop: CGFloat? = nil
     func intrinsicContentSizeForDynamicSizeView(_ view: DynamicSizeView) -> CGSize {
         let headerHeight: CGFloat = self.headerFieldsController.height
+        
         webView.scrollView.contentInset.top = headerHeight
+        webView.scrollView.contentOffset.y = (headerHeight + 60 ) * (-1)
+        print("offsety", webView.scrollView.contentOffset.y)
+//        if let previousTop = previousTop {
+//            webView.scrollView.contentOffset.y -= (headerHeight - previousTop)
+//        }
+//
+//        previousTop = headerHeight
+        
         return CGSize(width: self.view.frame.size.width, height:  headerHeight)
     }
 }
