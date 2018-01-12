@@ -48,7 +48,6 @@ class MessageDetailViewController: UIViewController, UIScrollViewDelegate, WKNav
     // MARK: - Instance Life Methods
     
     deinit {
-//        self.removeWebviewDidChangeSizeObserve()
     }
     
     override func didReceiveMemoryWarning() {
@@ -251,9 +250,6 @@ class MessageDetailViewController: UIViewController, UIScrollViewDelegate, WKNav
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         if self.webView.scrollView == scrollView &&
             self.webView.isLoading == false {
-            print("y", scrollView.contentOffset.y)
-            print("c", self.headerTopConstraint.constant)
-            print("h", self.headerHeightConstraint.constant)
             self.headerTopConstraint.constant = (scrollView.contentOffset.y + (self.headerHeightConstraint.constant + self.view.safeAreaLayoutGuide.layoutFrame.origin.y)) * (-1)
         }
     }
@@ -281,11 +277,7 @@ class MessageDetailViewController: UIViewController, UIScrollViewDelegate, WKNav
     func headerViewController(_ sender: MessageDetailHeaderViewController, didChangeHeight height: CGFloat) {
         headerHeightConstraint?.constant = height
         let y = -1 * (height + self.view.safeAreaLayoutGuide.layoutFrame.origin.y)
-//        self.webView.scrollView.contentInset.top = height
-//        self.webView.scrollView.contentOffset.y = 0
-        print("height", height)
-        print("frame", self.view.safeAreaLayoutGuide.layoutFrame.origin.y)
-        print("y2", y)
+
         self.webView.scrollView.contentOffset.y = y
         self.webView.scrollView.contentInset.top = height
     }
