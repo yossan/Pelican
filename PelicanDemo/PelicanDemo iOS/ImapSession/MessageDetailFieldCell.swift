@@ -11,6 +11,7 @@ import UIKit
 private let DefaultMinimumCellHaight: CGFloat = 40.0
 private let TitleLabelFont = UIFont(name: "HelveticaNeue", size: 17)!
 private let ValueLabelFont = UIFont(name: "HelveticaNeue", size: 17)!
+private let TitleLabelMaxWidth: CGFloat = 41.0
 private let OtherVerticalSpacing: CGFloat = 20.0
 private let OtherHorizontalSpacing: CGFloat = 20.0
 
@@ -31,14 +32,14 @@ class MessageDetailFieldCell: UITableViewCell {
     }
 
     class func cellHeight(withTitle title: String, value: String, cellWidth: CGFloat) -> CGFloat {
-        let titleLabelSize = self.titleLableSize(withTitle: title, maxWidth: cellWidth - OtherHorizontalSpacing)
+        let titleLabelSize = self.titleLableSize(withTitle: title)
         let valueLabelSize = self.sizeOfText(value, font: ValueLabelFont, options: .usesLineFragmentOrigin, maxWidth: cellWidth - OtherHorizontalSpacing - titleLabelSize.width)
         let cellHeight = valueLabelSize.height + OtherVerticalSpacing
         return max(cellHeight, DefaultMinimumCellHaight)
     }
     
-    class func titleLableSize(withTitle title: String, maxWidth: CGFloat) -> CGSize {
-        return self.sizeOfText(title, font: TitleLabelFont, options: [], maxWidth: maxWidth)
+    class func titleLableSize(withTitle title: String) -> CGSize {
+        return self.sizeOfText(title, font: TitleLabelFont, options: [], maxWidth: TitleLabelMaxWidth)
     }
     
     class func sizeOfText(_ text: String, font: UIFont, options: NSStringDrawingOptions, maxWidth: CGFloat) -> CGSize {

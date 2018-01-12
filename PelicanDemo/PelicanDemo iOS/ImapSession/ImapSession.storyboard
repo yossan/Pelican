@@ -111,42 +111,16 @@
             </objects>
             <point key="canvasLocation" x="1376.8" y="-197.45127436281859"/>
         </scene>
-        <!--Delegate-->
+        <!--Message Detail View Controller-->
         <scene sceneID="klR-NU-f4s">
             <objects>
-                <viewController id="JSX-6v-hU6" customClass="MessageDetailViewController" customModule="PelicanDemo_iOS" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="MessageDetailViewController" id="JSX-6v-hU6" customClass="MessageDetailViewController" customModule="PelicanDemo_iOS" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="SH1-3g-YYj">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <subviews>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="S8Y-kT-bi4">
-                                <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
-                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                            </view>
-                            <containerView opaque="NO" contentMode="scaleToFill" placeholderIntrinsicWidth="375" placeholderIntrinsicHeight="136" translatesAutoresizingMaskIntoConstraints="NO" id="dkI-4B-kQm" customClass="DynamicSizeView" customModule="PelicanDemo_iOS" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="60" width="375" height="136"/>
-                                <connections>
-                                    <outlet property="delegate" destination="JSX-6v-hU6" id="gLE-t8-1pv"/>
-                                    <segue destination="njh-A9-Duy" kind="embed" identifier="MessageDetailHeaderViewController" id="lyl-Ow-ear"/>
-                                </connections>
-                            </containerView>
-                        </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                        <constraints>
-                            <constraint firstItem="S8Y-kT-bi4" firstAttribute="trailing" secondItem="q5a-ZB-dEb" secondAttribute="trailing" id="75j-rR-FH5"/>
-                            <constraint firstItem="dkI-4B-kQm" firstAttribute="trailing" secondItem="q5a-ZB-dEb" secondAttribute="trailing" id="CeZ-HA-fUn"/>
-                            <constraint firstItem="dkI-4B-kQm" firstAttribute="top" secondItem="SH1-3g-YYj" secondAttribute="top" constant="60" id="GKF-Lo-XJr"/>
-                            <constraint firstItem="S8Y-kT-bi4" firstAttribute="top" secondItem="SH1-3g-YYj" secondAttribute="top" id="MST-v8-rOa"/>
-                            <constraint firstItem="S8Y-kT-bi4" firstAttribute="bottom" secondItem="q5a-ZB-dEb" secondAttribute="bottom" id="MnY-Ja-gcN"/>
-                            <constraint firstItem="S8Y-kT-bi4" firstAttribute="leading" secondItem="q5a-ZB-dEb" secondAttribute="leading" id="QrH-UZ-pYm"/>
-                            <constraint firstItem="dkI-4B-kQm" firstAttribute="leading" secondItem="q5a-ZB-dEb" secondAttribute="leading" id="j0G-Pk-edj"/>
-                        </constraints>
                         <viewLayoutGuide key="safeArea" id="q5a-ZB-dEb"/>
                     </view>
-                    <connections>
-                        <outlet property="headerContainerView" destination="dkI-4B-kQm" id="FxW-MB-Oca"/>
-                        <outlet property="webContentView" destination="S8Y-kT-bi4" id="6Bx-g9-EUj"/>
-                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="k1h-GF-7v8" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
@@ -155,9 +129,9 @@
         <!--Message Detail Header View Controller-->
         <scene sceneID="Vkg-h5-EeO">
             <objects>
-                <tableViewController storyboardIdentifier="MessageDetailViewController" id="njh-A9-Duy" customClass="MessageDetailHeaderViewController" customModule="PelicanDemo_iOS" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController storyboardIdentifier="MessageDetailHeaderViewController" id="njh-A9-Duy" customClass="MessageDetailHeaderViewController" customModule="PelicanDemo_iOS" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" bounces="NO" alwaysBounceVertical="YES" alwaysBounceHorizontal="YES" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" bouncesZoom="NO" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" id="8sP-Yz-80k">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="136"/>
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <prototypes>
@@ -193,6 +167,7 @@
                                 </tableViewCellContentView>
                                 <connections>
                                     <outlet property="ibSubjectLabel" destination="eaY-zC-294" id="7sd-A4-E8l"/>
+                                    <outlet property="ibSwitchButton" destination="ZjH-ao-Sfu" id="sP0-uM-ZEk"/>
                                 </connections>
                             </tableViewCell>
                             <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="MessageDetailFieldCell" rowHeight="40" id="oUh-bN-n6Q" customClass="MessageDetailFieldCell" customModule="PelicanDemo_iOS" customModuleProvider="target">
@@ -202,14 +177,17 @@
                                     <rect key="frame" x="0.0" y="0.0" width="375" height="39.5"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
-                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Title" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Sbk-jn-gAi">
-                                            <rect key="frame" x="10" y="9.5" width="32" height="20"/>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="from" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Sbk-jn-gAi">
+                                            <rect key="frame" x="10" y="10" width="41" height="20"/>
+                                            <constraints>
+                                                <constraint firstAttribute="width" constant="41" id="luh-eO-iv4"/>
+                                            </constraints>
                                             <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="17"/>
                                             <nil key="textColor"/>
                                             <nil key="highlightedColor"/>
                                         </label>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="250" text="Value" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="uGQ-1m-zuZ">
-                                            <rect key="frame" x="52" y="10" width="41" height="20"/>
+                                            <rect key="frame" x="61" y="10" width="41" height="20"/>
                                             <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="17"/>
                                             <nil key="textColor"/>
                                             <nil key="highlightedColor"/>
@@ -238,7 +216,7 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="SnY-N4-7Xr" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2944.8000000000002" y="-414.24287856071965"/>
+            <point key="canvasLocation" x="2928.8000000000002" y="-215.44227886056973"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="MZB-SN-JRn">

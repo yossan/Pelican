@@ -8,9 +8,14 @@
 import UIKit
 import Pelican
 
+protocol MessageDetailHeaderViewControllerDelegaet {
+    func headerViewController(_ sender: MessageDetailHeaderViewController, didChangeHeight: CGFloat)
+}
+
 class MessageDetailHeaderViewController: UITableViewController {
 
     var header: MessageHeader!
+    var delegate: MessageDetailHeaderViewControllerDelegaet!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -21,7 +26,6 @@ class MessageDetailHeaderViewController: UITableViewController {
         // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
         // self.navigationItem.rightBarButtonItem = self.editButtonItem
         
-//        self.tableView.isUserInteractionEnabled = false
         self.tableView.allowsSelection = false
         self.tableView.isScrollEnabled = false
         self.tableView.delaysContentTouches = true
@@ -39,24 +43,14 @@ class MessageDetailHeaderViewController: UITableViewController {
     // MARK: - IBAction
     @IBAction func onDetailBt(_ sender: UIButton) {
         self.isDetailShowed = !self.isDetailShowed
-        self.view.superview?.invalidateIntrinsicContentSize()
-//        self.tableView.beginUpdates()
-//        self.tableView.insertSections(IndexSet(integer: Section.detail.rawValue), with: .top)
-////        self.tableView.reloadSections(, with: .top)
-//        
-//        // changes content size
-//        
-//        self.tableView.endUpdates()
+        let height = self.calculateHeight()
+        self.delegate.headerViewController(self, didChangeHeight: height)
         self.tableView.reloadData()
-        
-        
     }
-    
-    // MARK: -
     
     var isDetailShowed: Bool = false
     
-    var height: CGFloat {
+    func calculateHeight() -> CGFloat {
         var indexPaths: [IndexPath] = [IndexPath(row: 0, section: Section.subject.rawValue)]
         if self.isDetailShowed == true {
             for i in 0..<self.detailRows.count {
@@ -176,6 +170,11 @@ class MessageDetailHeaderViewController: UITableViewController {
         case .subject:
             let cell = tableView.dequeueReusableCell(withIdentifier: "MessageDetailSubjectCell", for: indexPath) as! MessageDetailSubjectCell
             cell.ibSubjectLabel.text = self.header.subject
+            if self.isDetailShowed {
+                cell.ibSwitchButton.setTitle("Hide details", for: .normal)
+            } else {
+                cell.ibSwitchButton.setTitle("View details", for: .normal)
+            }
             return cell
         case .detail:
             let cell = tableView.dequeueReusableCell(withIdentifier: "MessageDetailFieldCell", for: indexPath) as! MessageDetailFieldCell

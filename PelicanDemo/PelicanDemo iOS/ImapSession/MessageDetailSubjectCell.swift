@@ -15,6 +15,7 @@ private let OtherVerticalSpacing: CGFloat = 61.5
 class MessageDetailSubjectCell: UITableViewCell {
 
     @IBOutlet var ibSubjectLabel: UILabel!
+    @IBOutlet var ibSwitchButton: UIButton!
     
     override func awakeFromNib() {
         super.awakeFromNib()

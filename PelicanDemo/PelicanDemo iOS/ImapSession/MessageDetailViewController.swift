@@ -9,18 +9,15 @@ import UIKit
 import Pelican
 import WebKit
 
-class MessageDetailViewController: UIViewController, UIScrollViewDelegate, WKNavigationDelegate, DynamicSizeViewDelegate {
+class MessageDetailViewController: UIViewController, UIScrollViewDelegate, WKNavigationDelegate, MessageDetailHeaderViewControllerDelegaet {
 
     // MARK: - IBOutlet related properties
     
     @IBOutlet weak var webContentView: UIView!
     private var webView: WKWebView!
-    private var loadingTextNavigation: WKNavigation? = nil
+    private var loadingTextNavigation: WKNavigation?
     
-    @IBOutlet weak var headerContainerView: UIView!
-    var headerFieldsController: MessageDetailHeaderViewController {
-        return self.childViewControllers[0] as! MessageDetailHeaderViewController
-    }
+    var headerViewController: MessageDetailHeaderViewController!
     
     // MARK: - Instance properties
     
@@ -64,19 +61,53 @@ class MessageDetailViewController: UIViewController, UIScrollViewDelegate, WKNav
     override func viewDidLoad() {
         super.viewDidLoad()
         guard self.copyMessageBody() else { return }
-        
         self.setupUI()
         self.loadBody()
     }
     
+    var headerHeightConstraint: NSLayoutConstraint!
+    var headerTopConstraint: NSLayoutConstraint!
     // MARK: - private methods
     private func setupUI() {
-        self.headerFieldsController.header = self.message.header
-//        self.headerContainerView.isUserInteractionEnabled = false
         
         self.webView = self.makeWebView()
-        self.webContentView.addSubview(self.webView)
-        self.webView.scrollView.addSubview(self.headerContainerView)
+        self.view.addSubview(self.webView)
+        
+        self.headerViewController = self.makeHeaderViewController()
+        self.addChildViewController(self.headerViewController)
+        self.webView.scrollView.addSubview(self.headerViewController.view)
+        self.headerViewController.didMove(toParentViewController: self)
+        
+        headerViewController.view.translatesAutoresizingMaskIntoConstraints = false
+        headerViewController.view.leadingAnchor.constraint(equalTo: self.view.leadingAnchor, constant: 0.0).isActive = true
+        self.headerTopConstraint = headerViewController.view.topAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.topAnchor, constant: 0.0)
+        self.headerTopConstraint.isActive = true
+        headerViewController.view.trailingAnchor.constraint(equalTo: self.view.trailingAnchor, constant: 0.0).isActive = true
+        let height = self.headerViewController.calculateHeight()
+        self.headerHeightConstraint = headerViewController.view.heightAnchor.constraint(equalToConstant: height)
+        headerHeightConstraint.isActive = true
+        self.webView.scrollView.contentInset.top = height
+    }
+    
+    private func makeHeaderViewController() -> MessageDetailHeaderViewController {
+        let headerViewController = self.storyboard?.instantiateViewController(withIdentifier: "MessageDetailHeaderViewController") as! MessageDetailHeaderViewController
+        headerViewController.header = self.message.header!
+        headerViewController.delegate = self
+        return headerViewController
+    }
+    
+    private func makeWebView() -> WKWebView {
+        let controller = WKUserContentController()
+        controller.addUserScript(self.scriptForViewPort())
+        controller.addUserScript(self.scriptForLoadingEmbededImg())
+        let config = WKWebViewConfiguration()
+        config.userContentController = controller
+        
+        let webView = WKWebView(frame: self.view.bounds, configuration: config)
+        webView.navigationDelegate = self
+        webView.scrollView.delegate = self
+        webView.autoresizingMask = [.flexibleTopMargin, .flexibleWidth, .flexibleHeight, .flexibleLeftMargin, .flexibleRightMargin, .flexibleBottomMargin]
+        return webView
     }
     
     private func copyMessageBody() -> Bool {
@@ -187,20 +218,6 @@ class MessageDetailViewController: UIViewController, UIScrollViewDelegate, WKNav
         return String.Encoding(charset: charset) ?? .ascii
     }
     
-    private func makeWebView() -> WKWebView {
-        let controller = WKUserContentController()
-        controller.addUserScript(self.scriptForViewPort())
-        controller.addUserScript(self.scriptForLoadingEmbededImg())
-        let config = WKWebViewConfiguration()
-        config.userContentController = controller
-        
-        let webView = WKWebView(frame: self.webContentView.bounds, configuration: config)
-        webView.navigationDelegate = self
-        webView.scrollView.delegate = self
-        webView.autoresizingMask = [.flexibleTopMargin, .flexibleWidth, .flexibleHeight, .flexibleLeftMargin, .flexibleRightMargin, .flexibleBottomMargin]
-        return webView
-    }
-    
     private func scriptForViewPort() -> WKUserScript {
         let javascript =
         """
@@ -232,8 +249,12 @@ class MessageDetailViewController: UIViewController, UIScrollViewDelegate, WKNav
     }
     
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        if self.webView.scrollView == scrollView {
-            self.headerContainerView.frame.origin.y = (scrollView.contentOffset.y + self.headerContainerView.frame.size.height) * (-1)
+        if self.webView.scrollView == scrollView &&
+            self.webView.isLoading == false {
+            print("y", scrollView.contentOffset.y)
+            print("c", self.headerTopConstraint.constant)
+            print("h", self.headerHeightConstraint.constant)
+            self.headerTopConstraint.constant = (scrollView.contentOffset.y + (self.headerHeightConstraint.constant + self.view.safeAreaLayoutGuide.layoutFrame.origin.y)) * (-1)
         }
     }
     
@@ -257,20 +278,15 @@ class MessageDetailViewController: UIViewController, UIScrollViewDelegate, WKNav
         }
     }
     
-    //MARK: - DynamicSizeViewDelegate
-    var previousTop: CGFloat? = nil
-    func intrinsicContentSizeForDynamicSizeView(_ view: DynamicSizeView) -> CGSize {
-        let headerHeight: CGFloat = self.headerFieldsController.height
-        
-        webView.scrollView.contentInset.top = headerHeight
-        webView.scrollView.contentOffset.y = (headerHeight + 60 ) * (-1)
-        print("offsety", webView.scrollView.contentOffset.y)
-//        if let previousTop = previousTop {
-//            webView.scrollView.contentOffset.y -= (headerHeight - previousTop)
-//        }
-//
-//        previousTop = headerHeight
-        
-        return CGSize(width: self.view.frame.size.width, height:  headerHeight)
+    func headerViewController(_ sender: MessageDetailHeaderViewController, didChangeHeight height: CGFloat) {
+        headerHeightConstraint?.constant = height
+        let y = -1 * (height + self.view.safeAreaLayoutGuide.layoutFrame.origin.y)
+//        self.webView.scrollView.contentInset.top = height
+//        self.webView.scrollView.contentOffset.y = 0
+        print("height", height)
+        print("frame", self.view.safeAreaLayoutGuide.layoutFrame.origin.y)
+        print("y2", y)
+        self.webView.scrollView.contentOffset.y = y
+        self.webView.scrollView.contentInset.top = height
     }
 }
