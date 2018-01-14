@@ -43,6 +43,21 @@ class MessageListViewController: UITableViewController {
 //            let uids = try imap.search(condition)
 //            print(uids)
             try imap.select(self.selectedFolder.name)
+//            try imap.search
+            var fetchCount = 0
+            for term in SearchCondition.weeks(range: 0..<48) {
+                let uids = try imap.search(term)
+                fetchCount += uids.count
+                try imap.fetch(uids: uids, options: [.messageHeader, .bodystructure]) { [weak self] (messages) in
+                    OperationQueue.main.addOperation {
+                        self?.appendMessage(messages)
+                    }
+                }
+                
+                if fetchCount >= 50 {
+                    break
+                }
+            }
             
         }, catched: { (error) in
             self.sessionController.handleImapError(error as? ImapSessionError)

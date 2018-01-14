@@ -38,6 +38,7 @@
 		4AD31D3A1FF9D610009A2CDB /* AuthorizaionSession+State.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AD31D391FF9D610009A2CDB /* AuthorizaionSession+State.swift */; };
 		4AD3C36F200A06CA00326BB2 /* SearchCondition+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AD3C36E200A06CA00326BB2 /* SearchCondition+.swift */; };
 		4AD3C37F200B1E7F00326BB2 /* FolderCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AD3C37E200B1E7F00326BB2 /* FolderCell.swift */; };
+		4AD3C381200B3F9200326BB2 /* Date+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AD3C380200B3F9200326BB2 /* Date+.swift */; };
 		4AFF4FB81FF77E6600C2FC72 /* RootViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AFF4FB71FF77E6600C2FC72 /* RootViewController.swift */; };
 		4AFF4FBC1FF77F0B00C2FC72 /* AuthorizationSessionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AFF4FBA1FF77F0B00C2FC72 /* AuthorizationSessionViewController.swift */; };
 		4AFF4FBD1FF77F0B00C2FC72 /* AuthorizationSessionViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4AFF4FBB1FF77F0B00C2FC72 /* AuthorizationSessionViewController.xib */; };
@@ -96,6 +97,7 @@
 		4AD31D391FF9D610009A2CDB /* AuthorizaionSession+State.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AuthorizaionSession+State.swift"; sourceTree = "<group>"; };
 		4AD3C36E200A06CA00326BB2 /* SearchCondition+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SearchCondition+.swift"; sourceTree = "<group>"; };
 		4AD3C37E200B1E7F00326BB2 /* FolderCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FolderCell.swift; sourceTree = "<group>"; };
+		4AD3C380200B3F9200326BB2 /* Date+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Date+.swift"; sourceTree = "<group>"; };
 		4AFF4FB71FF77E6600C2FC72 /* RootViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootViewController.swift; sourceTree = "<group>"; };
 		4AFF4FBA1FF77F0B00C2FC72 /* AuthorizationSessionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthorizationSessionViewController.swift; sourceTree = "<group>"; };
 		4AFF4FBB1FF77F0B00C2FC72 /* AuthorizationSessionViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = AuthorizationSessionViewController.xib; sourceTree = "<group>"; };
@@ -127,6 +129,7 @@
 				4A30A0DC20084D1C0076436E /* Optional+.swift */,
 				4A30A0DE20084E6B0076436E /* String.Encoding+.swift */,
 				4A49B46A2001D143004941CC /* Pelican+ */,
+				4AD3C380200B3F9200326BB2 /* Date+.swift */,
 			);
 			path = utils;
 			sourceTree = "<group>";
@@ -342,6 +345,7 @@
 				4A30A0DD20084D1C0076436E /* Optional+.swift in Sources */,
 				4AFF4FCB1FF7E84200C2FC72 /* Paths.swift in Sources */,
 				4AFF4FC91FF7C5F000C2FC72 /* StoredData.swift in Sources */,
+				4AD3C381200B3F9200326BB2 /* Date+.swift in Sources */,
 				4AFF4FC21FF77F4F00C2FC72 /* ImapSessionViewController.swift in Sources */,
 				4AD033DD1FEF4D2400084911 /* MessageListViewController.swift in Sources */,
 				4A30A0DA200758B20076436E /* DynamicSizeView.swift in Sources */,

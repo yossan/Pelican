@@ -88,7 +88,17 @@ public class ImapSession {
         }
     }
     
-    public func fetchLast(num: UInt32, options: FetchOptions, handler: @escaping (Message)->()) -> ImapSessionError {
+    public func fetch(uids: [UInt32], options: FetchOptions, handler: @escaping (Message)->()) throws {
+        let set = mailimap_set_new_empty();
+        for uid in uids {
+            mailimap_set_add_single(set, uid)
+        }
+        defer { mailimap_set_free(set) }
+        
+        try self.fetch(set: set!, options: options, handler: handler)
+    }
+    
+    public func fetchLast(num: UInt32, options: FetchOptions, handler: @escaping (Message)->()) throws {
         
         let messageCount: UInt32 = {
             guard let info = self.imap.pointee.imap_selection_info,
@@ -99,15 +109,17 @@ public class ImapSession {
         }()
         
         let range: Range<UInt32> = messageCount - num ..< messageCount
-        return self.fetch(range: range, options: options, completion: handler)
+        try self.fetch(range: range, options: options, handler: handler)
     }
     
-    public func fetch(range: Range<UInt32>, options: FetchOptions, completion: @escaping (Message)->()) -> ImapSessionError {
-        
+    public func fetch(range: Range<UInt32>, options: FetchOptions, handler: @escaping (Message)->()) throws {
         let set = mailimap_set_new_empty();
         mailimap_set_add_interval(set, range.lowerBound, range.upperBound)
         defer { mailimap_set_free(set) }
-        
+        try self.fetch(set: set!, options: options, handler: handler)
+    }
+    
+    func fetch(set: UnsafeMutablePointer<mailimap_set>, options: FetchOptions, handler: @escaping (Message)->()) throws {
         let fetchType = mailimap_fetch_type_new_fetch_att_list_empty()
         defer { mailimap_fetch_type_free(fetchType) }
         
@@ -128,16 +140,16 @@ public class ImapSession {
             mailimap_fetch_type_new_fetch_att_list_add(fetchType, bodyStructureAtt)
         }
         
-        return self.imap.fetch(isUID: false, set: set, type: fetchType) { (messageAttribute) in
+        try self.imap.fetch(isUID: false, set: set, type: fetchType) { (messageAttribute) in
             guard let messageAttribute = messageAttribute,
                 let message = Message(mailimap_msg_att: messageAttribute) else {
                     return
             }
-            completion(message)
+            handler(message)
         }
     }
     
-    public func fetchData(uid: UInt32, partId: String, completion: @escaping (Data)->()) -> ImapSessionError {
+    public func fetchData(uid: UInt32, partId: String, completion: @escaping (Data)->()) throws {
         
         let set = mailimap_set_new_single(uid)
         defer { mailimap_set_free(set) }
@@ -157,7 +169,7 @@ public class ImapSession {
         let bodyPeekSection = mailimap_fetch_att_new_body_peek_section(section)
         mailimap_fetch_type_new_fetch_att_list_add(fetchType, bodyPeekSection)
 
-        let r = self.imap.fetch(isUID: true, set: set, type: fetchType) { (messageAttribute) in
+        try self.imap.fetch(isUID: true, set: set, type: fetchType) { (messageAttribute) in
             messageAttribute?.pointee.parse(handler: { (attribute) in
                 guard case let .`static`(mailimap_msg_att_static) = attribute else {
                     return
@@ -176,7 +188,6 @@ public class ImapSession {
                 })
             })
         }
-        return r
     }
     
     /*

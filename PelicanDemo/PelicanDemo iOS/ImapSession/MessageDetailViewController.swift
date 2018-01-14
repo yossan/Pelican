@@ -155,6 +155,10 @@ class MessageDetailViewController: UIViewController, UIScrollViewDelegate, WKNav
         return file.url
     }
     
+    private enum MessageDetailError: Error {
+        case downloadingTextFailure
+    }
+    
     private func downloadParts(completion: @escaping (Error?)->()) {
         let uid = self.message.uid
         self.sessionController.command({ (imap) in
@@ -164,14 +168,13 @@ class MessageDetailViewController: UIViewController, UIScrollViewDelegate, WKNav
                 }
                 
                 var part = part
-                let r = imap.fetchData(uid: uid, partId: part.id, completion: { (data) in
+                try imap.fetchData(uid: uid, partId: part.id, completion: { (data) in
                     part.data = data
                     self.copiedMessageBody[part.id]? = part
                 })
-                
-                if r.isSuccess == false &&
-                    part.id == self.textPart.id {
-                    throw r
+    
+                if part.data == nil && part.id == self.textPart.id {
+                    throw MessageDetailError.downloadingTextFailure
                 }
                 
                 if let error = self.write(part: part),
