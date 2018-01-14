@@ -60,6 +60,7 @@ public enum Address: CustomStringConvertible {
 
 public struct MessageHeader: CustomStringConvertible {
     public var messageId : String?
+    public var dateComponents : DateComponents?
     public var date      : Date?
     public var subject   : String = ""
     public var from      : [AddressMailBox] = []

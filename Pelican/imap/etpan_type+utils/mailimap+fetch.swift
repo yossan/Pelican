@@ -27,9 +27,9 @@ extension UnsafeMutablePointer where Pointee == mailimap {
         var fetchResult: UnsafeMutablePointer<clist>? = nil
         
         if isUID {
-            try mailimap_uid_fetch(self, set, fetchType, &fetchResult).toImapSessionError()
+            try mailimap_uid_fetch(self, set, fetchType, &fetchResult).toImapSessionError().check()
         } else {
-            try mailimap_fetch(self, set, fetchType, &fetchResult).toImapSessionError()
+            try mailimap_fetch(self, set, fetchType, &fetchResult).toImapSessionError().check()
         }
         defer {mailimap_fetch_list_free(fetchResult) }
     }

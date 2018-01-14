@@ -15,7 +15,8 @@ class MessageListViewController: UITableViewController {
     }
     
     var selectedFolder: Folder!
-    var messages: [Message] = []
+    var dateAndMessages: [String: [Message]] = [:]
+    var dates: [String] = []
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -49,9 +50,8 @@ class MessageListViewController: UITableViewController {
                 let uids = try imap.search(term)
                 fetchCount += uids.count
                 try imap.fetch(uids: uids, options: [.messageHeader, .bodystructure]) { [weak self] (messages) in
-                    OperationQueue.main.addOperation {
-                        self?.appendMessage(messages)
-                    }
+                    self?.appendMessage(messages)
+                    
                 }
                 
                 if fetchCount >= 50 {
@@ -65,12 +65,41 @@ class MessageListViewController: UITableViewController {
     }
     
     func appendMessage(_ message: Message) {
-        guard message.header != nil else { return }
-        self.tableView.beginUpdates()
-        self.messages.append(message)
-        let appendingIndexPath = IndexPath(row: self.messages.count-1, section: 0)
-        self.tableView.insertRows(at: [appendingIndexPath], with: .top)
-        self.tableView.endUpdates()
+        OperationQueue.main.addOperation {
+        guard let header = message.header,
+            let headerDate = header.date,
+            let datecompoents = header.dateComponents,
+            let year = datecompoents.year,
+            let month = datecompoents.month,
+            let day = datecompoents.day
+            else { return }
+        
+        let date = String(format: "%2d/%2d/%2d", year, month, day)
+        let indexPath: IndexPath
+            var sectionInsert = false
+            if let section = self.dates.index(of: date) {
+            let row = self.dateAndMessages[date]!.insert(message) { (comparison) in
+                return headerDate < message.header!.date!
+            }
+            indexPath = IndexPath(row: row, section: section)
+        } else {
+            let section = self.dates.insert(date) { (comparison) in
+                return date > comparison
+            }
+            self.dateAndMessages[date] = [message]
+            sectionInsert = true
+            indexPath = IndexPath(row: 0, section: section)
+        }
+            
+            self.tableView.beginUpdates()
+            if sectionInsert {
+                self.tableView.insertSections([indexPath.section], with: .top)
+            }
+            self.tableView.insertRows(at: [indexPath], with: .top)
+            
+            self.tableView.endUpdates()
+//            self.tableView.reloadData()
+        }
     }
 
     override func didReceiveMemoryWarning() {
@@ -82,19 +111,23 @@ class MessageListViewController: UITableViewController {
 
     override func numberOfSections(in tableView: UITableView) -> Int {
         // #warning Incomplete implementation, return the number of sections
-        return 1
+        return self.dates.count
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         // #warning Incomplete implementation, return the number of rows
-        return self.messages.count
+        let date = self.dates[section]
+        let messages = self.dateAndMessages[date]!
+        return messages.count
     }
 
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "MessageCell", for: indexPath) as! MessageCell
 
-        let header = self.messages[indexPath.row].header!
+        let date = self.dates[indexPath.section]
+        let messages = self.dateAndMessages[date]!
+        let header = messages[indexPath.row].header!
         cell.ibSubjectLabel.text = header.subject
         cell.ibFromLabel.text = header.from.first!.displayName ?? header.from.first!.email
 
@@ -163,8 +196,9 @@ class MessageListViewController: UITableViewController {
         if segue.identifier == "MessageDetailViewController",
             let selectedIndex = self.tableView.indexPathForSelectedRow {
             let dest = segue.destination as! MessageDetailViewController
-            let selectedMessage = self.messages[selectedIndex.row]
-            dest.message = selectedMessage
+            let date = self.dates[selectedIndex.section]
+            let message = self.dateAndMessages[date]![selectedIndex.row]
+            dest.message = message
         }
     }
 

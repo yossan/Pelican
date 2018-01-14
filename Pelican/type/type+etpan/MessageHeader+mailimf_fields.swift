@@ -26,7 +26,8 @@ extension MessageHeader {
             case MAILIMF_FIELD_RESENT_MSG_ID: break
             case MAILIMF_FIELD_ORIG_DATE:
                 let origDate = data.fld_orig_date!
-                self.date = self.parse(mailimf_orig_date: origDate)
+                self.dateComponents = self.parse(mailimf_orig_date: origDate)
+                self.date = self.dateComponents?.date
             case MAILIMF_FIELD_FROM:
                 let fieldFrom = data.fld_from!
                 let mailBoxes = self.parse(mailimf_mailbox_list: fieldFrom.pointee.frm_mb_list)
@@ -100,7 +101,7 @@ extension MessageHeader {
         }
     }
     
-    private func parse(mailimf_orig_date date: UnsafeMutablePointer<mailimf_orig_date>) -> Date? {
+    private func parse(mailimf_orig_date date: UnsafeMutablePointer<mailimf_orig_date>) -> DateComponents {
         /*
          struct mailimf_orig_date {
          struct mailimf_date_time * dt_date_time; /* != NULL */
@@ -109,7 +110,7 @@ extension MessageHeader {
         return parse(mailimf_date_time: date.pointee.dt_date_time!)
     }
     
-    private func parse(mailimf_date_time dateTime: UnsafeMutablePointer<mailimf_date_time>) -> Date? {
+    private func parse(mailimf_date_time dateTime: UnsafeMutablePointer<mailimf_date_time>) -> DateComponents {
         var dateComponents = DateComponents()
         dateComponents.calendar = Calendar(identifier: .gregorian)
         dateComponents.year   = Int(dateTime.pointee.dt_year)
@@ -123,7 +124,7 @@ extension MessageHeader {
             let sign = dateTime.pointee.dt_zone > 0 ? 1 : -1
             return TimeZone(secondsFromGMT: sign * 3600 * timeZoneHour + 60 * timeZoneMin)
         }()
-        return dateComponents.date
+        return dateComponents
     }
     
     private func parse(mailimf_mailbox_list list: UnsafeMutablePointer<mailimf_mailbox_list>) -> [AddressMailBox] {
