@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import libetpan
 
 public struct AddressMailBox: CustomStringConvertible {
 

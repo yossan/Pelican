@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import libetpan
 
 public class Message: CustomStringConvertible {
     public var uid    : UInt32 = 0

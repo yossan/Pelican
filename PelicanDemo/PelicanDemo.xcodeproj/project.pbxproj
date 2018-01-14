@@ -36,6 +36,8 @@
 		4AD31D361FF92B93009A2CDB /* Configuration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AD31D351FF92B93009A2CDB /* Configuration.swift */; };
 		4AD31D381FF92BC6009A2CDB /* AppConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AD31D371FF92BC6009A2CDB /* AppConfiguration.swift */; };
 		4AD31D3A1FF9D610009A2CDB /* AuthorizaionSession+State.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AD31D391FF9D610009A2CDB /* AuthorizaionSession+State.swift */; };
+		4AD3C36F200A06CA00326BB2 /* SearchCondition+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AD3C36E200A06CA00326BB2 /* SearchCondition+.swift */; };
+		4AD3C37F200B1E7F00326BB2 /* FolderCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AD3C37E200B1E7F00326BB2 /* FolderCell.swift */; };
 		4AFF4FB81FF77E6600C2FC72 /* RootViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AFF4FB71FF77E6600C2FC72 /* RootViewController.swift */; };
 		4AFF4FBC1FF77F0B00C2FC72 /* AuthorizationSessionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AFF4FBA1FF77F0B00C2FC72 /* AuthorizationSessionViewController.swift */; };
 		4AFF4FBD1FF77F0B00C2FC72 /* AuthorizationSessionViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4AFF4FBB1FF77F0B00C2FC72 /* AuthorizationSessionViewController.xib */; };
@@ -92,6 +94,8 @@
 		4AD31D351FF92B93009A2CDB /* Configuration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Configuration.swift; sourceTree = "<group>"; };
 		4AD31D371FF92BC6009A2CDB /* AppConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppConfiguration.swift; sourceTree = "<group>"; };
 		4AD31D391FF9D610009A2CDB /* AuthorizaionSession+State.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AuthorizaionSession+State.swift"; sourceTree = "<group>"; };
+		4AD3C36E200A06CA00326BB2 /* SearchCondition+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SearchCondition+.swift"; sourceTree = "<group>"; };
+		4AD3C37E200B1E7F00326BB2 /* FolderCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FolderCell.swift; sourceTree = "<group>"; };
 		4AFF4FB71FF77E6600C2FC72 /* RootViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootViewController.swift; sourceTree = "<group>"; };
 		4AFF4FBA1FF77F0B00C2FC72 /* AuthorizationSessionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthorizationSessionViewController.swift; sourceTree = "<group>"; };
 		4AFF4FBB1FF77F0B00C2FC72 /* AuthorizationSessionViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = AuthorizationSessionViewController.xib; sourceTree = "<group>"; };
@@ -131,6 +135,7 @@
 			isa = PBXGroup;
 			children = (
 				4A49B46B2001D175004941CC /* MessageHeader+.swift */,
+				4AD3C36E200A06CA00326BB2 /* SearchCondition+.swift */,
 			);
 			path = "Pelican+";
 			sourceTree = "<group>";
@@ -207,6 +212,7 @@
 				4AFF4FBF1FF77F2C00C2FC72 /* ImapSession.storyboard */,
 				4AFF4FC11FF77F4F00C2FC72 /* ImapSessionViewController.swift */,
 				4AD033D11FEE5ADF00084911 /* FolderListViewController.swift */,
+				4AD3C37E200B1E7F00326BB2 /* FolderCell.swift */,
 				4AD033DC1FEF4D2400084911 /* MessageListViewController.swift */,
 				4AC69B681FFCD08900341C83 /* MessageCell.swift */,
 				4AA1DE5D1FFE101E00AC9FC7 /* MessageDetailViewController.swift */,
@@ -329,6 +335,8 @@
 				4AFF4FC61FF78BDE00C2FC72 /* AuthorizationSession.swift in Sources */,
 				4AD31D361FF92B93009A2CDB /* Configuration.swift in Sources */,
 				4AFF4FB81FF77E6600C2FC72 /* RootViewController.swift in Sources */,
+				4AD3C36F200A06CA00326BB2 /* SearchCondition+.swift in Sources */,
+				4AD3C37F200B1E7F00326BB2 /* FolderCell.swift in Sources */,
 				4A49B46C2001D175004941CC /* MessageHeader+.swift in Sources */,
 				4AD033D31FEE5ADF00084911 /* FolderListViewController.swift in Sources */,
 				4A30A0DD20084D1C0076436E /* Optional+.swift in Sources */,

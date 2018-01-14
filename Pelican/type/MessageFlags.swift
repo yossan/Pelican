@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import libetpan
 
 public struct MessageFlag: OptionSet {
     public let rawValue: Int

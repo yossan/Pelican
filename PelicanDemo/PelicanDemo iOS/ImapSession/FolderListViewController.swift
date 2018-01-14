@@ -10,19 +10,24 @@ import Pelican
 
 class FolderListViewController: UITableViewController {
     
-    var folders: [String] = []
+    var sessionController: ImapSessionViewController {
+        return self.parent!.parent as! ImapSessionViewController
+    }
+    
+    var namespace: NamespaceItem?
+    var folders: [Folder] = []
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        // Uncomment the following line to preserve selection between presentations
-        // self.clearsSelectionOnViewWillAppear = false
-
-        // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-        // self.navigationItem.rightBarButtonItem = self.editButtonItem
-        
-        let imapSession = ImapSession.shared
-        self.folders = imapSession.fetchFolders() ?? []
+        self.sessionController.command({ [weak self] (imap) in
+            guard let `self` = self else { return }
+            self.folders = try imap.list(namespace: self.namespace)
+            OperationQueue.main.addOperation {
+                self.tableView.reloadData()
+            }
+        }) { [weak self] (error) in
+            self?.sessionController.handleImapError(error as? ImapSessionError)
+        }
     }
 
     override func didReceiveMemoryWarning() {
@@ -43,16 +48,9 @@ class FolderListViewController: UITableViewController {
         return self.folders.count
     }
 
-
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let reuseIdentifieer = "CellIdentifier"
-        let cell = tableView.dequeueReusableCell(withIdentifier: reuseIdentifieer) ?? {
-            return UITableViewCell(style: .default, reuseIdentifier: reuseIdentifieer)
-        }()
-
-        // Configure the cell...
-        cell.textLabel?.text = folders[indexPath.row]
-
+        let cell = tableView.dequeueReusableCell(withIdentifier: "FolderCellIdentifier", for: indexPath) as! FolderCell
+        cell.ibNameLabel?.text = folders[indexPath.row].name
         return cell
     }
  
@@ -94,18 +92,19 @@ class FolderListViewController: UITableViewController {
     
     // MARK: - UITableView Delegate
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let folder = self.folders[indexPath.row]
-//        self.showMessageList(withFolder: folder)
     }
 
-    /*
     // MARK: - Navigation
 
     // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
+        if let messageViewController = segue.destination as? MessageListViewController,
+            let cell = sender as? UITableViewCell,
+            let indexPath = self.tableView.indexPath(for: cell) {
+            
+            let folder = self.folders[indexPath.row]
+            messageViewController.selectedFolder = folder
+        }
     }
-    */
     
 }

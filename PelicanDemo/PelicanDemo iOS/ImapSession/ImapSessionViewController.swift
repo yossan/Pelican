@@ -19,7 +19,7 @@ class ImapSessionViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
-        self.moveForMessageListView()
+        self.setupSession()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -54,47 +54,76 @@ class ImapSessionViewController: UIViewController {
     }
     
     func handleImapError(_ error: ImapSessionError?) {
+        print("handle error", error)
     }
     
+    private func setupSession() {
+        self.refereshAccessTokenIfNeed { (result) in
+            switch result {
+            case .success(let user):
+                self.startSession(user: user) { (namespace) in
+                    self.showFolderList(namespace: namespace)
+                }
+            case .failure(let error):
+                self.handleAuthError(error)
+            }
+        }
+    }
     
-    // MARK: - private
-    
-    private func moveForMessageListView() {
+    func refereshAccessTokenIfNeed(completion: @escaping (Result<User, OAuthClientError>)->()) {
         switch self.authSession.state {
         case .tokenExpiration (let token):
             self.refreshToken(token) { (result) in
                 switch result {
                 case .success(let user):
-                    self.showMessageList(with: user)
+                    completion(.success(user))
                 case .failure(let error):
-                    self.handleAuthError(error)
+                    completion(.failure(error))
                 }
             }
         case .loginPossible (let user):
-            self.showMessageList(with: user)
+           completion(.success(user))
         default: break
         }
     }
     
-    private func showMessageList(with user: User) {
-        self.command({[weak self] (imap) -> () in
+    private func startSession(user: User, successCompletion: @escaping (NamespaceItem?)->()) {
+        self.command({(imap) -> () in
             let gmail = Configuration.gmail
-            try imap.connect(hostName: gmail.host, port: gmail.port).check()
-            try imap.login(user: user.email!, accessToken: user.token!.accessToken).check()
-            try imap.select("INBOX").check()
+            try imap.connect(hostName: gmail.host, port: gmail.port)
             
-            guard let `self` = self else { return }
-            OperationQueue.main.addOperation { [weak self] in
-                guard let `self` = self else { return }
-                let msgNaviViewController = self.storyboard?.instantiateViewController(withIdentifier: "MessageNavigationViewController") as! UINavigationController
-                self.addChildViewController(msgNaviViewController)
-                msgNaviViewController.view.frame = self.view.bounds
-                self.view.addSubview(msgNaviViewController.view)
-                msgNaviViewController.didMove(toParentViewController: self)
+            let capability = try imap.capability()
+            imap.storedCapability = capability
+            
+            try imap.login(user: user.email!, accessToken: user.token!.accessToken)
+            
+            let namespace = try imap.namespace()?.personal
+            
+            OperationQueue.main.addOperation {
+                successCompletion(namespace)
             }
-            }, catched: { (error) in
-                self.handleImapError(error as? ImapSessionError)
+            }, catched: { [weak self] (error) in
+                self?.handleImapError(error as? ImapSessionError)
         })
+    }
+    
+    private func showFolderList(namespace: NamespaceItem?) {
+        let msgNaviViewController = self.storyboard?.instantiateViewController(withIdentifier: "MessageNavigationViewController") as! UINavigationController
+        self.addChildViewController(msgNaviViewController)
+        msgNaviViewController.view.frame = self.view.bounds
+        self.view.addSubview(msgNaviViewController.view)
+        msgNaviViewController.didMove(toParentViewController: self)
+        
+        let folderListViewController = msgNaviViewController.childViewControllers[0] as! FolderListViewController
+        folderListViewController.namespace = namespace
+    }
+    
+    private func showMessageList() {
+        let msgNaviViewController = self.storyboard?.instantiateViewController(withIdentifier: "MessageNavigationViewController") as! UINavigationController
+        self.addChildViewController(msgNaviViewController)
+        msgNaviViewController.view.frame = self.view.bounds
+        self.view.addSubview(msgNaviViewController.view)
+        msgNaviViewController.didMove(toParentViewController: self)
     }
     
     private func showAuthorizationSessionView(animated: Bool = true) {
@@ -103,7 +132,9 @@ class ImapSessionViewController: UIViewController {
             switch result {
             case .success(let user):
                 authSessionViewController.dismiss(animated: true, completion: {
-                    self.showMessageList(with: user)
+                    self.startSession(user: user) { (namespace) in
+                        self.showFolderList(namespace: namespace)
+                    }
                 })
             case .failure(let error):
                 self.handleAuthError(error)
@@ -120,7 +151,6 @@ class ImapSessionViewController: UIViewController {
             case .success(let user):
                 completion(.success(user))
             case .failure(let error):
-//                self.handleAuthError(error)
                 completion(.failure(error))
             }
         }

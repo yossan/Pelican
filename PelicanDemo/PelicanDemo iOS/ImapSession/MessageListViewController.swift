@@ -14,6 +14,7 @@ class MessageListViewController: UITableViewController {
         return self.parent?.parent as! ImapSessionViewController
     }
     
+    var selectedFolder: Folder!
     var messages: [Message] = []
     
     override func viewDidLoad() {
@@ -25,17 +26,24 @@ class MessageListViewController: UITableViewController {
         // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
         // self.navigationItem.rightBarButtonItem = self.editButtonItem
         
-        self.sessionController.command({ (imap) in
+        self.sessionController.command({ [weak self] (imap) in
+            guard let `self` = self else { return }
 //            try imap.fetch(range: 1..<50, options: [.messageHeader, .bodystructure], completion: { (message) in
 //                OperationQueue.main.addOperation {
 //                    self.appendMessage(message)
 //                }
 //            }).check()
-            try imap.fetchLast(num: 50, options: [.messageHeader, .bodystructure]) { (message) in
-                OperationQueue.main.addOperation {
-                    self.appendMessage(message)
-                }
-            }.check()
+//            try imap.fetchLast(num: 50, options: [.messageHeader, .bodystructure]) { (message) in
+//                OperationQueue.main.addOperation {
+//                    self.appendMessage(message)
+//                }
+//            }.check()
+//            let condition: SearchCondition = .and(.key(.sentbefore(day: 10, month: 2, year: 2018)), .key(.sentsince(day: 1, month: 1, year: 2018)))
+//            let condition: SearchCondition = .key(.subject("テスト"))
+//            let uids = try imap.search(condition)
+//            print(uids)
+            try imap.select(self.selectedFolder.name)
+            
         }, catched: { (error) in
             self.sessionController.handleImapError(error as? ImapSessionError)
         })
@@ -139,11 +147,9 @@ class MessageListViewController: UITableViewController {
         // Pass the selected object to the new view controller.
         if segue.identifier == "MessageDetailViewController",
             let selectedIndex = self.tableView.indexPathForSelectedRow {
-            
             let dest = segue.destination as! MessageDetailViewController
             let selectedMessage = self.messages[selectedIndex.row]
             dest.message = selectedMessage
-            
         }
     }
 

@@ -31,6 +31,21 @@
 		4AD033A81FEE3BAC00084911 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 4AD033A71FEE3BAC00084911 /* libz.tbd */; };
 		4AD033DB1FEEACE300084911 /* clist+utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AD033DA1FEEACE300084911 /* clist+utils.swift */; };
 		4AD033DF1FEF755700084911 /* String+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AD033DE1FEF755700084911 /* String+.swift */; };
+		4AD3C3672009A29200326BB2 /* SearchKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AD3C3662009A29200326BB2 /* SearchKey.swift */; };
+		4AD3C3682009A29A00326BB2 /* mailimap_msg_att_static+parse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AE3905820005FFE001D479F /* mailimap_msg_att_static+parse.swift */; };
+		4AD3C3692009A29A00326BB2 /* mailimap_msg_att_body_section+parse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AE3905A200065B0001D479F /* mailimap_msg_att_body_section+parse.swift */; };
+		4AD3C36A2009A29A00326BB2 /* mailimap_msg_att_dynamic+parse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A18B2EC20005A9200FA5BE3 /* mailimap_msg_att_dynamic+parse.swift */; };
+		4AD3C36B2009A33200326BB2 /* clist+utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AD033DA1FEEACE300084911 /* clist+utils.swift */; };
+		4AD3C36D2009DB2300326BB2 /* SearchCondition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AD3C36C2009DB2300326BB2 /* SearchCondition.swift */; };
+		4AD3C371200ADC1D00326BB2 /* SelectionInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AD3C370200ADC1D00326BB2 /* SelectionInfo.swift */; };
+		4AD3C373200AE03300326BB2 /* Capability.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AD3C372200AE03300326BB2 /* Capability.swift */; };
+		4AD3C374200AE03300326BB2 /* Capability.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AD3C372200AE03300326BB2 /* Capability.swift */; };
+		4AD3C376200B045400326BB2 /* Namespace.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AD3C375200B045300326BB2 /* Namespace.swift */; };
+		4AD3C377200B045400326BB2 /* Namespace.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AD3C375200B045300326BB2 /* Namespace.swift */; };
+		4AD3C379200B0A1C00326BB2 /* Namespace+mailimap_namespace_data.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AD3C378200B0A1C00326BB2 /* Namespace+mailimap_namespace_data.swift */; };
+		4AD3C37A200B0A1C00326BB2 /* Namespace+mailimap_namespace_data.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AD3C378200B0A1C00326BB2 /* Namespace+mailimap_namespace_data.swift */; };
+		4AD3C37C200B160D00326BB2 /* Folder+mailimap_mailbox_list.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AD3C37B200B160D00326BB2 /* Folder+mailimap_mailbox_list.swift */; };
+		4AD3C37D200B160D00326BB2 /* Folder+mailimap_mailbox_list.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AD3C37B200B160D00326BB2 /* Folder+mailimap_mailbox_list.swift */; };
 		4AE3905920005FFE001D479F /* mailimap_msg_att_static+parse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AE3905820005FFE001D479F /* mailimap_msg_att_static+parse.swift */; };
 		4AE3905B200065B0001D479F /* mailimap_msg_att_body_section+parse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AE3905A200065B0001D479F /* mailimap_msg_att_body_section+parse.swift */; };
 		4AE3905D20006EC9001D479F /* MessageHeader+mailimf_fields.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AE3905C20006EC9001D479F /* MessageHeader+mailimf_fields.swift */; };
@@ -80,6 +95,13 @@
 		4AD033A71FEE3BAC00084911 /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
 		4AD033DA1FEEACE300084911 /* clist+utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "clist+utils.swift"; sourceTree = "<group>"; };
 		4AD033DE1FEF755700084911 /* String+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+.swift"; sourceTree = "<group>"; };
+		4AD3C3662009A29200326BB2 /* SearchKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchKey.swift; sourceTree = "<group>"; };
+		4AD3C36C2009DB2300326BB2 /* SearchCondition.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchCondition.swift; sourceTree = "<group>"; };
+		4AD3C370200ADC1D00326BB2 /* SelectionInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectionInfo.swift; sourceTree = "<group>"; };
+		4AD3C372200AE03300326BB2 /* Capability.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Capability.swift; sourceTree = "<group>"; };
+		4AD3C375200B045300326BB2 /* Namespace.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Namespace.swift; sourceTree = "<group>"; };
+		4AD3C378200B0A1C00326BB2 /* Namespace+mailimap_namespace_data.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Namespace+mailimap_namespace_data.swift"; sourceTree = "<group>"; };
+		4AD3C37B200B160D00326BB2 /* Folder+mailimap_mailbox_list.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Folder+mailimap_mailbox_list.swift"; sourceTree = "<group>"; };
 		4AE3905820005FFE001D479F /* mailimap_msg_att_static+parse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "mailimap_msg_att_static+parse.swift"; sourceTree = "<group>"; };
 		4AE3905A200065B0001D479F /* mailimap_msg_att_body_section+parse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "mailimap_msg_att_body_section+parse.swift"; sourceTree = "<group>"; };
 		4AE3905C20006EC9001D479F /* MessageHeader+mailimf_fields.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MessageHeader+mailimf_fields.swift"; sourceTree = "<group>"; };
@@ -113,23 +135,12 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		4A773F9D1FFFB4F4000ECF50 /* type+parse */ = {
-			isa = PBXGroup;
-			children = (
-				4A18B2E82000573700FA5BE3 /* mailimap_msg_att+parse.swift */,
-				4A18B2EC20005A9200FA5BE3 /* mailimap_msg_att_dynamic+parse.swift */,
-				4AE3905820005FFE001D479F /* mailimap_msg_att_static+parse.swift */,
-				4AE3905A200065B0001D479F /* mailimap_msg_att_body_section+parse.swift */,
-			);
-			path = "type+parse";
-			sourceTree = "<group>";
-		};
-		4A7C8A602001F84400BA42B0 /* type+util */ = {
+		4A7C8A602001F84400BA42B0 /* util */ = {
 			isa = PBXGroup;
 			children = (
 				4A49B46D2001E2C0004941CC /* MailPart+util.swift */,
 			);
-			path = "type+util";
+			path = util;
 			sourceTree = "<group>";
 		};
 		4AD0334F1FEE139800084911 = {
@@ -184,10 +195,11 @@
 			isa = PBXGroup;
 			children = (
 				4AD033741FEE14FC00084911 /* ImapSession.swift */,
+				4AD3C36C2009DB2300326BB2 /* SearchCondition.swift */,
+				4AD3C3662009A29200326BB2 /* SearchKey.swift */,
 				4AFF4FB51FF769AE00C2FC72 /* ImapSessionError.swift */,
 				4A1D2F152003115C00955F78 /* MIMEError.swift */,
-				4AE3906120009621001D479F /* type+utils */,
-				4A773F9D1FFFB4F4000ECF50 /* type+parse */,
+				4AE3906120009621001D479F /* etpan_type+utils */,
 			);
 			path = imap;
 			sourceTree = "<group>";
@@ -205,7 +217,6 @@
 		4AD033D91FEEACCB00084911 /* utils */ = {
 			isa = PBXGroup;
 			children = (
-				4AD033DA1FEEACE300084911 /* clist+utils.swift */,
 				4A1D2F1320030F0A00955F78 /* Int32+Error.swift */,
 				4AD033DE1FEF755700084911 /* String+.swift */,
 				4A46061D1FFF67D900DE63E5 /* Sequence+.swift */,
@@ -213,35 +224,45 @@
 			path = utils;
 			sourceTree = "<group>";
 		};
-		4AE39060200077A7001D479F /* type+imap */ = {
+		4AE39060200077A7001D479F /* type+etpan */ = {
 			isa = PBXGroup;
 			children = (
 				4A773FA720004D5D000ECF50 /* Message+mailimap_msg_att.swift */,
 				4A18B2EA20005A7000FA5BE3 /* MessageFlag+mailimap_msg_att_dynamic.swift */,
 				4AE3905C20006EC9001D479F /* MessageHeader+mailimf_fields.swift */,
 				4AE3905E200071D0001D479F /* MailPart+mailimap_body.swift */,
+				4AD3C378200B0A1C00326BB2 /* Namespace+mailimap_namespace_data.swift */,
+				4AD3C37B200B160D00326BB2 /* Folder+mailimap_mailbox_list.swift */,
 			);
-			path = "type+imap";
+			path = "type+etpan";
 			sourceTree = "<group>";
 		};
-		4AE3906120009621001D479F /* type+utils */ = {
+		4AE3906120009621001D479F /* etpan_type+utils */ = {
 			isa = PBXGroup;
 			children = (
+				4AD033DA1FEEACE300084911 /* clist+utils.swift */,
 				4AE3906220009650001D479F /* mailimap+fetch.swift */,
+				4A18B2E82000573700FA5BE3 /* mailimap_msg_att+parse.swift */,
+				4A18B2EC20005A9200FA5BE3 /* mailimap_msg_att_dynamic+parse.swift */,
+				4AE3905820005FFE001D479F /* mailimap_msg_att_static+parse.swift */,
+				4AE3905A200065B0001D479F /* mailimap_msg_att_body_section+parse.swift */,
 			);
-			path = "type+utils";
+			path = "etpan_type+utils";
 			sourceTree = "<group>";
 		};
 		4AFF4F711FF5C0B400C2FC72 /* type */ = {
 			isa = PBXGroup;
 			children = (
+				4AD3C372200AE03300326BB2 /* Capability.swift */,
+				4AD3C375200B045300326BB2 /* Namespace.swift */,
+				4AD3C370200ADC1D00326BB2 /* SelectionInfo.swift */,
 				4AFF4F7B1FF5CAE300C2FC72 /* Folder.swift */,
 				4AFF4F781FF5C10600C2FC72 /* Message.swift */,
 				4A4B82061FF3863400D3C072 /* MessageFlags.swift */,
 				4AFF4F721FF5C0DB00C2FC72 /* MessageHeader.swift */,
 				4AFF4F751FF5C0E800C2FC72 /* MailPart.swift */,
-				4A7C8A602001F84400BA42B0 /* type+util */,
-				4AE39060200077A7001D479F /* type+imap */,
+				4A7C8A602001F84400BA42B0 /* util */,
+				4AE39060200077A7001D479F /* type+etpan */,
 			);
 			path = type;
 			sourceTree = "<group>";
@@ -365,14 +386,18 @@
 			buildActionMask = 2147483647;
 			files = (
 				4A4B82071FF3863400D3C072 /* MessageFlags.swift in Sources */,
+				4AD3C36D2009DB2300326BB2 /* SearchCondition.swift in Sources */,
 				4AFF4F761FF5C0E800C2FC72 /* MailPart.swift in Sources */,
+				4AD3C373200AE03300326BB2 /* Capability.swift in Sources */,
 				4AFF4F7C1FF5CAE300C2FC72 /* Folder.swift in Sources */,
+				4AD3C37C200B160D00326BB2 /* Folder+mailimap_mailbox_list.swift in Sources */,
 				4AD033DB1FEEACE300084911 /* clist+utils.swift in Sources */,
 				4AC69B621FFCB02E00341C83 /* MessageHeader.swift in Sources */,
 				4A18B2EB20005A7000FA5BE3 /* MessageFlag+mailimap_msg_att_dynamic.swift in Sources */,
 				4AE3905F200071D0001D479F /* MailPart+mailimap_body.swift in Sources */,
 				4A18B2ED20005A9200FA5BE3 /* mailimap_msg_att_dynamic+parse.swift in Sources */,
 				4A773FA820004D5D000ECF50 /* Message+mailimap_msg_att.swift in Sources */,
+				4AD3C3672009A29200326BB2 /* SearchKey.swift in Sources */,
 				4AFF4FB61FF769AE00C2FC72 /* ImapSessionError.swift in Sources */,
 				4AE3905920005FFE001D479F /* mailimap_msg_att_static+parse.swift in Sources */,
 				4AD033DF1FEF755700084911 /* String+.swift in Sources */,
@@ -380,8 +405,11 @@
 				4A18B2E92000573700FA5BE3 /* mailimap_msg_att+parse.swift in Sources */,
 				4AD033751FEE14FC00084911 /* ImapSession.swift in Sources */,
 				4A46061E1FFF67D900DE63E5 /* Sequence+.swift in Sources */,
+				4AD3C376200B045400326BB2 /* Namespace.swift in Sources */,
 				4AE3905B200065B0001D479F /* mailimap_msg_att_body_section+parse.swift in Sources */,
+				4AD3C379200B0A1C00326BB2 /* Namespace+mailimap_namespace_data.swift in Sources */,
 				4A49B46E2001E2C0004941CC /* MailPart+util.swift in Sources */,
+				4AD3C371200ADC1D00326BB2 /* SelectionInfo.swift in Sources */,
 				4AE3906320009650001D479F /* mailimap+fetch.swift in Sources */,
 				4A1D2F1420030F0A00955F78 /* Int32+Error.swift in Sources */,
 				4A1D2F162003115C00955F78 /* MIMEError.swift in Sources */,
@@ -393,16 +421,24 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4AD3C36A2009A29A00326BB2 /* mailimap_msg_att_dynamic+parse.swift in Sources */,
 				4AFF4F771FF5C0E800C2FC72 /* MailPart.swift in Sources */,
 				4AC69B631FFCB03000341C83 /* MessageHeader.swift in Sources */,
 				4AFF4F7D1FF5CAE300C2FC72 /* Folder.swift in Sources */,
+				4AD3C37D200B160D00326BB2 /* Folder+mailimap_mailbox_list.swift in Sources */,
 				4AFF4F7A1FF5C10600C2FC72 /* Message.swift in Sources */,
+				4AD3C3682009A29A00326BB2 /* mailimap_msg_att_static+parse.swift in Sources */,
 				4AC69B601FFCB01200341C83 /* MessageFlags.swift in Sources */,
+				4AD3C377200B045400326BB2 /* Namespace.swift in Sources */,
+				4AD3C36B2009A33200326BB2 /* clist+utils.swift in Sources */,
 				4A18B2EE20005B6F00FA5BE3 /* mailimap_msg_att+parse.swift in Sources */,
 				4AD033A41FEE3B2A00084911 /* ImapSession.swift in Sources */,
 				4A773FA920004D5D000ECF50 /* Message+mailimap_msg_att.swift in Sources */,
+				4AD3C374200AE03300326BB2 /* Capability.swift in Sources */,
 				4AE3906420009650001D479F /* mailimap+fetch.swift in Sources */,
+				4AD3C37A200B0A1C00326BB2 /* Namespace+mailimap_namespace_data.swift in Sources */,
 				4AC69B611FFCB01900341C83 /* ImapSessionError.swift in Sources */,
+				4AD3C3692009A29A00326BB2 /* mailimap_msg_att_body_section+parse.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

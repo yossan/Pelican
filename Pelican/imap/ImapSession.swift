@@ -14,70 +14,68 @@ import libetpan
 public class ImapSession {
     public static let shared: ImapSession = ImapSession()
     let imap: UnsafeMutablePointer<mailimap>
+    public var storedCapability: Capability = []
     
     init() {
         self.imap = mailimap_new(0, nil)
         mailimap_set_progress_callback(imap, {(_,_,_) in },{(_,_,_) in }, nil)
     }
+    
     deinit {
         mailimap_set_progress_callback(imap, nil, nil, nil)
         mailimap_logout(imap)
         mailimap_free(imap)
     }
     
-    public func connect(hostName: String, port: UInt16) -> ImapSessionError {
-        let r = mailimap_ssl_connect(imap, hostName, port)
-        return ImapSessionError(r)
+    public func connect(hostName: String, port: UInt16) throws {
+        try mailimap_ssl_connect(imap, hostName, port).toImapSessionError().check()
     }
     
-    public func login(user: String, accessToken: String) -> ImapSessionError {
-        let r = mailimap_oauth2_authenticate(imap, user, accessToken)
-        return ImapSessionError(r)
+    public func login(user: String, accessToken: String) throws {
+        try mailimap_oauth2_authenticate(imap, user, accessToken).toImapSessionError().check()
     }
     
-    public func list(withResult result: inout [String]) -> ImapSessionError {
+    public func capability() throws -> Capability {
+        var capabilityData: UnsafeMutablePointer<mailimap_capability_data>? = nil
         
-        return .UNKNOWN
+        try mailimap_capability(imap, &capabilityData).toImapSessionError().check()
+        defer { mailimap_capability_data_free(capabilityData) }
+        
+        return Capability(mailimap: imap)
     }
     
-    public func fetchFolders() -> [String]? {
-    
-    
-        // Optional<UnsafeMutablePointer<clist_s>>
-        var folderList = clist_new()
-        defer { clist_free(folderList) }
-    
-        guard mailimap_list(imap, "/", "*", &folderList) == 0 else {
-            print("fetching folders failed")
-            return nil
+    public func namespace() throws -> Namespace? {
+        if self.storedCapability.contains(.Namespace) {
+            // fetch namespace
+            var namespaceData: UnsafeMutablePointer<mailimap_namespace_data>? = nil
+            try mailimap_namespace(imap, &namespaceData).toImapSessionError().check()
+            defer { mailimap_namespace_data_free(namespaceData) }
+            return Namespace(mailimap_namespace_data: namespaceData!)
         }
-        
-        var results: [String] = []
-        for folder in sequence(folderList!, of: mailimap_mailbox_list.self) {
-            let name = String(cString: UnsafePointer<Int8>(folder.pointee.mb_name))
-          
-            results.append(name)
-            
-//            let delimiter: String = String(cString: &folder.pointee.mb_delimiter)
-//            print("delimiter", delimiter)
-//
-//            let type = folder.pointee.mb_flag.pointee.mbf_type
-//            print("folder.type", type)
-//            let flags = folder.pointee.mb_flag.pointee.mbf_oflags
-//
-//            for flag in sequence(flags!, of: mailimap_mbx_list_oflag.self) {
-//                print("of_flag_ext", String(cString: UnsafePointer<Int8>(flag.pointee.of_flag_ext)))
-//
-//                print("of_type",flag.pointee.of_type)
-//            }
-        }
-        
-        return results.isEmpty == false ? results : nil
+        return nil
     }
     
-    public func select(_ name: String) -> ImapSessionError {
-        let r = mailimap_select(imap, name)
-        return ImapSessionError(r)
+    public func list(namespace: NamespaceItem? = nil) throws -> [Folder] {
+        let deliminatorCode = namespace?.infoList.first?.deliminator ?? 47 // 47 = backslash
+        let deleminatoer = String(UnicodeScalar(UInt8(deliminatorCode)))
+        
+        var listResult: UnsafeMutablePointer<clist>? = nil
+        try mailimap_list(imap, deleminatoer, "*", &listResult).toImapSessionError().check()
+        defer { clist_free(listResult) }
+        
+        return sequence(listResult!, of: mailimap_mailbox_list.self).map { Folder.init(mailimap_mailbox_list: $0) }
+    }
+    
+    @discardableResult
+    public func select(_ name: String) throws -> SelectionInfo {
+        try mailimap_select(imap, name).toImapSessionError().check()
+        let selectedFolder = try self.selectedFolder()
+        return selectedFolder
+    }
+    
+    public func selectedFolder() throws -> SelectionInfo {
+        guard let info = imap.pointee.imap_selection_info else { throw ImapSessionError.SELECTEDFOLDER }
+        return SelectionInfo(mailimap_selection_info: info)
     }
     
     public struct FetchOptions: OptionSet {
@@ -281,4 +279,22 @@ public class ImapSession {
         return r == 0 ? true : false
 
     }*/
+    
+    public func search(_ condition: SearchCondition) throws -> [UInt32] {
+        let charset = "UTF-8"
+        let searchKey = condition.createMAILIMAP_SEACH_KEY()
+        defer { mailimap_search_key_free(searchKey) }
+        var resultBox: UnsafeMutablePointer<clist>? = nil
+        if self.storedCapability.contains(.LiteralPlus) {
+            try mailimap_search_literalplus(imap, charset, searchKey, &resultBox).toImapSessionError().check()
+        } else {
+            try mailimap_uid_search(imap, charset, searchKey, &resultBox).toImapSessionError().check()
+        }
+        defer { mailimap_search_result_free(resultBox) }
+        guard let result = resultBox else {
+            throw ImapSessionError.SEARCH
+        }
+        
+        return result.array()
+    }
 }

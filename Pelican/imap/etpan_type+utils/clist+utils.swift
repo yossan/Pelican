@@ -33,3 +33,13 @@ func sequence<T>(_ clist: UnsafeMutablePointer<clist>, of type: T.Type) -> AnySe
     }
 }
 
+extension UnsafeMutablePointer where Pointee == clist {
+    func array<T>() -> [T] {
+        var temps: [T] = []
+        for item in sequence(self, of: T.self) {
+            temps.append(item.pointee)
+        }
+        return temps
+    }
+}
+
