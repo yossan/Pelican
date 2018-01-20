@@ -13,6 +13,7 @@ import Pelican
 class ImapSessionViewController: UIViewController {
 
     var authSession: AuthorizationSession! = nil
+    var imapSession: ImapSession = ImapSession()
     
     // MARK: - View Life Cycle
     
@@ -29,6 +30,11 @@ class ImapSessionViewController: UIViewController {
 //        self.showInitialContentView()
     }
     
+    override func didMove(toParentViewController parent: UIViewController?) {
+        if parent == nil {
+        }
+    }
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
@@ -38,13 +44,14 @@ class ImapSessionViewController: UIViewController {
     let commandQueue: OperationQueue = {
         let q = OperationQueue()
         q.name = "ImapCommandOperationQueue"
+        q.maxConcurrentOperationCount = 1
         return q
     }()
     
     func command(_ task: @escaping (ImapSession) throws -> (), catched: @escaping (Error) -> ())  {
         commandQueue.addOperation {
             do {
-                try task(ImapSession.shared)
+                try task(self.imapSession)
             } catch let error  {
                 OperationQueue.main.addOperation {
                     catched(error)
@@ -70,6 +77,19 @@ class ImapSessionViewController: UIViewController {
         }
     }
     
+    
+    /*
+    func restartSession() {
+        self.refreshToken(self.authSession.user.token!) { (result) in
+            switch result {
+            case .success(let user):
+                let namespace =
+                self.imap = ImapSession()
+                
+            }
+        }
+    }
+    */
     func refereshAccessTokenIfNeed(completion: @escaping (Result<User, OAuthClientError>)->()) {
         switch self.authSession.state {
         case .tokenExpiration (let token):

@@ -55,6 +55,7 @@ public enum ImapSessionError: Int, Error {
     case NEEDS_MORE_DATA
     case CUSTOM_COMMAND
     case SELECTEDFOLDER
+    case USER_CANCELED
     case UNKNOWN
     
     init(_ value: Int32) {
@@ -134,6 +135,7 @@ extension ImapSessionError: CustomStringConvertible {
         case .NEEDS_MORE_DATA: return "NEEDS_MORE_DATA"
         case .CUSTOM_COMMAND: return "CUSTOM_COMMAND"
         case .SELECTEDFOLDER: return "SELECTEDFOLDER"
+        case .USER_CANCELED: return "USER_CANCELED"
         default: return "Unknown"
         }
     }

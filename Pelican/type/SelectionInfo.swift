@@ -9,12 +9,12 @@ import Foundation
 import libetpan
 
 public struct SelectionInfo {
-    let uidNext: UInt32
-    let uidValidity: UInt32
-    let firstUnseen: UInt32
-    let exists: UInt32?
-    let recent: UInt32?
-    let unseen: UInt32
+    public let uidNext: UInt32
+    public let uidValidity: UInt32
+    public let firstUnseen: UInt32
+    public let exists: UInt32?
+    public let recent: UInt32?
+    public let unseen: UInt32
 //    let allowflags: Bool
     
     init(mailimap_selection_info info: UnsafeMutablePointer<mailimap_selection_info>) {

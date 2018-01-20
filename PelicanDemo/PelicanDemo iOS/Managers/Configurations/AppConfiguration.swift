@@ -8,5 +8,10 @@
 import Foundation
 
 class AppConfiguration {
-    
+    static let messageList: MessageListConfiguration = MessageListConfiguration()
+}
+
+struct MessageListConfiguration {
+    let requestCount: Int = 20
+    let maximumCount: Int = 20
 }

@@ -12,11 +12,10 @@ import libetpan
  ImapSession is not threadsafe.
  */
 public class ImapSession {
-    public static let shared: ImapSession = ImapSession()
     let imap: UnsafeMutablePointer<mailimap>
     public var storedCapability: Capability = []
     
-    init() {
+    public init() {
         self.imap = mailimap_new(0, nil)
         mailimap_set_progress_callback(imap, {(_,_,_) in },{(_,_,_) in }, nil)
     }
@@ -66,8 +65,13 @@ public class ImapSession {
         return sequence(listResult!, of: mailimap_mailbox_list.self).map { Folder.init(mailimap_mailbox_list: $0) }
     }
     
-    @discardableResult
+    private var selectedFolderName: String = ""
     public func select(_ name: String) throws -> SelectionInfo {
+        guard self.selectedFolderName != name else {
+            return try self.selectedFolder()
+        }
+        self.selectedFolderName = name
+        
         try mailimap_select(imap, name).toImapSessionError().check()
         let selectedFolder = try self.selectedFolder()
         return selectedFolder

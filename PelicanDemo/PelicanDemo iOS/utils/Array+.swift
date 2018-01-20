@@ -25,4 +25,12 @@ extension Array {
         self.append(element)
         return index
     }
+
+    mutating func popLast(_ maxLength: Int) -> [Element] {
+        let subdivition = Array(self.suffix(maxLength))
+        let deleteCount = self.count > maxLength ? maxLength : self.count
+        self.removeLast(deleteCount)
+        return subdivition
+    }
+
 }

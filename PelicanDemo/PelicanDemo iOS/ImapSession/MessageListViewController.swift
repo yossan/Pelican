@@ -8,16 +8,18 @@
 import UIKit
 import Pelican
 
-class MessageListViewController: UITableViewController {
+private let  Config = AppConfiguration.messageList
 
+class MessageListViewController: UITableViewController {
+    
     var sessionController: ImapSessionViewController {
         return self.parent?.parent as! ImapSessionViewController
     }
     
     var selectedFolder: Folder!
-    var dateAndMessages: [String: [Message]] = [:]
-    var dates: [String] = []
-    
+    var dateAndMessages: [DateComponents: [Message]] = [:]
+    var dates: [DateComponents] = []
+    var cancelFetchingFlag: Bool = false
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -43,63 +45,82 @@ class MessageListViewController: UITableViewController {
 //            let condition: SearchCondition = .key(.subject("テスト"))
 //            let uids = try imap.search(condition)
 //            print(uids)
-            try imap.select(self.selectedFolder.name)
-//            try imap.search
+            let selection = try imap.select(self.selectedFolder.name)
+            guard let exists = selection.exists,
+                exists > 0 else { return }
+            
             var fetchCount = 0
-            for term in SearchCondition.weeks(range: 0..<48) {
-                let uids = try imap.search(term)
-                fetchCount += uids.count
-                try imap.fetch(uids: uids, options: [.messageHeader, .bodystructure]) { [weak self] (messages) in
-                    self?.appendMessage(messages)
-                    
-                }
-                
-                if fetchCount >= 50 {
-                    break
+            var uidBuffer: [UInt32] = []
+            term: for term in SearchCondition.weeks(range: 0 ..< 48) {
+                guard self.cancelFetchingFlag == false else { break term; }
+                let temps = try imap.search(term)
+                uidBuffer.append(contentsOf: temps)
+                uids: while uidBuffer.count > 0 &&
+                    self.cancelFetchingFlag == false {
+                        
+                        let uids = uidBuffer.popLast(Config.requestCount)
+                        try imap.fetch(uids: uids, options: [.messageHeader, .bodystructure]) { [weak self] (message) in
+                            OperationQueue.main.addOperation {
+                                self?.appendMessage(message)
+                            }
+                        }
+                        fetchCount += uids.count
+                        if fetchCount >= exists || 
+                            fetchCount >= Config.maximumCount {
+                            break term
+                        }
                 }
             }
             
         }, catched: { (error) in
-            self.sessionController.handleImapError(error as? ImapSessionError)
+            print(error)
+//            self.sessionController.handleImapError(error as? ImapSessionError)
         })
     }
     
+    override func willMove(toParentViewController parent: UIViewController?) {
+        if parent == nil {
+            self.cancelFetchingFlag = true
+        }
+    }
+    
+    
     func appendMessage(_ message: Message) {
-        OperationQueue.main.addOperation {
         guard let header = message.header,
             let headerDate = header.date,
-            let datecompoents = header.dateComponents,
-            let year = datecompoents.year,
-            let month = datecompoents.month,
-            let day = datecompoents.day
+            let datecomponents = header.dateComponents,
+            let year = datecomponents.year,
+            let month = datecomponents.month,
+            let day = datecomponents.day
             else { return }
         
-        let date = String(format: "%2d/%2d/%2d", year, month, day)
+        let date = datecomponents
         let indexPath: IndexPath
-            var sectionInsert = false
-            if let section = self.dates.index(of: date) {
+        var sectionInsert = false
+        if let section = self.dates.index(of: date) {
             let row = self.dateAndMessages[date]!.insert(message) { (comparison) in
                 return headerDate < message.header!.date!
             }
             indexPath = IndexPath(row: row, section: section)
         } else {
             let section = self.dates.insert(date) { (comparison) in
-                return date > comparison
+                let me = year * 365 + month * 30 + day
+                let target = comparison.year! * 365 + comparison.month! * 30 + comparison.day!
+                return me < target
             }
             self.dateAndMessages[date] = [message]
             sectionInsert = true
             indexPath = IndexPath(row: 0, section: section)
         }
-            
-            self.tableView.beginUpdates()
-            if sectionInsert {
-                self.tableView.insertSections([indexPath.section], with: .top)
-            }
-            self.tableView.insertRows(at: [indexPath], with: .top)
-            
-            self.tableView.endUpdates()
-//            self.tableView.reloadData()
+        
+        self.tableView.beginUpdates()
+        if sectionInsert {
+            self.tableView.insertSections([indexPath.section], with: .top)
         }
+        self.tableView.insertRows(at: [indexPath], with: .top)
+        
+        self.tableView.endUpdates()
+        
     }
 
     override func didReceiveMemoryWarning() {
